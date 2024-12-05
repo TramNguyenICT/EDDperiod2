@@ -396,14 +396,18 @@ def get_question_bank_country_group():
 if __name__ == '__main__':
     app.run(use_reloader=True, host='127.0.0.1',port=5000)
 
+    connection = get_db_connection()
+    cursor = connection.cursor()
     for i in range(6):
         while True:
             grinch_airport = random.randint(1002, 1059)
             sql4a = f"SELECT grinch_id from airport WHERE airport_id = {grinch_airport}"
             cursor.execute(sql4a)
-            grinch_id = cursor.fetchone()["grinch_id"]
-            if (grinch_id == None):
-                sql4b = f"UPDATE airport SET grinch_id = i WHERE airport_id ={grinch_airport}"
+            grinch_id = cursor.fetchone()
+            if grinch_id is None:
+                sql4b = f"UPDATE airport SET grinch_id = {i} WHERE airport_id = {grinch_airport}"
                 cursor.execute(sql4b)
                 connection.commit()
-                break;
+                break
+    cursor.close()
+    connection.close()

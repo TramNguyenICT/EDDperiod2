@@ -202,18 +202,32 @@ function createElement(type, attributes, styles) {
   return element;
 }
 
-/*
+
 //Test to appear the question
-function displaySnowman() {
-  const snowman = createElement('img', {
-    src: 'img/snowman.png',
-    alt: "I'm a snowman"
+function displaySnowmanAndQuizBox() {
+  const snowman_and_quiz_box = createElement('div', {
+    class: "snowman_and_quiz_box",
   }, {
-    padding: '10% 70% 5% 5%',
-    width: '50px',
+    position: 'absolute',
+    bottom: '1rem',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justify_contentcontent: 'flex-start',
+    align_itemsitems: 'flex-end',
+    padding: '1rem',
+    z_index: '1'
+  });
+  document.body.appendChild(snowman_and_quiz_box);
+  const snowmandiv = createElement('div', {
+    class: 'snowman_and_quiz_box'
+  }, {
+    padding: '50% 5% 5% 30%',
+    width: '800px',
     height: 'auto'
   });
-  document.body.appendChild(snowman);
+  document.body.appendChild(grayFrame);
 }
 function displayGrayFrame() {
   const grayFrame = createElement('img', {
