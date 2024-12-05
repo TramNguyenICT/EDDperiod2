@@ -173,7 +173,7 @@ async function updateFinalResult(playerId, result) {
 
 async function getWeatherData(airportId){
   try{
-    const response = await fetch(`/get_weather_data?airport_id=${airportId}`)
+    const response = await fetch(`http://127.0.0.1:5000/get_weather_data?airport_id=${airportId}`)
     const responseJson = await response.json()
     return responseJson
   }
@@ -187,7 +187,7 @@ async function fetchQuestionsByGroup(countryGroup){
   try{
     const response = await fetch(`http://127.0.0.1:5000/get_question_bank_country_group?country_group=${countryGroup}`)
     const responseJson = await response.json()
-    return resposneJson
+    return responseJson
   }
   catch (error){
     console.log(error)
@@ -306,7 +306,18 @@ function displaySnowmanAndQuizBox() {
     width: '100%',
   });
   quizDivision.appendChild(flexDiv);
+}
 
+async function appearQuestion(questionId){
+  const questionData =await getQuestion(questionId)
+  console.log(questionData)
+  const question_content = questionData.question_content;
+  const right_answer = questionData.right_answer;
+  const win_message = questionData.win_message;
+  const lose_message = questionData.lose_message;
+  const questionField = document.querySelector('.quiz_paragraph')
+  questionField.innerHTML = question_content
+  const flexDiv = document.querySelector('.flex')
   // Text input
   const textInput = createElement('input', {
     type: 'text',
@@ -321,7 +332,6 @@ function displaySnowmanAndQuizBox() {
     fontSize: '2rem',
   });
   flexDiv.appendChild(textInput);
-
   // Submit button
   const submitButton = createElement('button', {
     type: 'button',
@@ -351,17 +361,6 @@ function displaySnowmanAndQuizBox() {
     }
   `;
   document.head.appendChild(style);
-}
-
-async function appearQuestion(questionId){
-  const questionData =await getQuestion(questionId)
-  console.log(questionData)
-  const question_content = questionData.question_content;
-  const right_answer = questionData.right_answer;
-  const win_message = questionData.win_message;
-  const lose_message = questionData.lose_message;
-  const questionField = document.querySelector('.quiz_paragraph')
-  questionField.innerHTML = question_content
   let isCorrect;
   const input = document.querySelector('.query')
   const submit = document.querySelector('.submit')
@@ -380,12 +379,12 @@ async function appearQuestion(questionId){
       questionField.innerHTML = lose_message
     }
     input.remove();
-    submit.removeEventListener('click', handleSubmit);
     submit.remove();
+    afterQuestion();
     questionDone++
   });
 }
-async function afterQuestion(questionId){
+async function afterQuestion(){
     const nextButton = createElement('button', {
       type: 'button',
       class: 'next',
@@ -404,14 +403,42 @@ async function afterQuestion(questionId){
     flexDiv.appendChild(nextButton);
     const next = document.querySelector('.next')
     nextButton.addEventListener('click',async function(evt) {
-    const snowman_and_quiz_box = document.querySelector('.snowman_and_quiz_box')
-    snowman_and_quiz_box.remove()
+      nextButton.remove()
+      const snowman_and_quiz_box = document.querySelector('.snowman_and_quiz_box')
+      snowman_and_quiz_box.remove()
     });
 }
 
-async function appearGreeting(airportId){
+async function appearGreeting(airportId, questionId){
   const airportData = await getAirportData(airportId)
   const greeting = airportData.greeting
+  const airport_name = airportData.airport_name
+  const weatherData = await getWeatherData(airportId)
+  const weathercontent = 'The current weather at '+ airport_name + ' is '+ weatherData.description + ' and the temperature is ' + weatherData.temperature + ' Celcius degree.'
+  const flexDiv = document.querySelector('.flex')
+  const greetingField = document.querySelector('.quiz_paragraph')
+  greetingField.innerText = greeting;
+  greetingField.innerText += weathercontent;
+  const nextButton = createElement('button', {
+      type: 'button',
+      class: 'next',
+      }, {
+      backgroundColor: '#3B82F6',
+      color: 'white',
+      fontWeight: '700',
+      fontSize: '1.5rem',
+      padding: '0.5rem 1rem',
+      borderRadius: '0.25rem',
+      transition: 'background-color 0.2s ease',
+      cursor: 'pointer',
+    });
+    nextButton.innerText = 'Next'
+    flexDiv.appendChild(nextButton);
+    nextButton.addEventListener('click',async function(evt) {
+      greetingField.innerText = ''
+      nextButton.remove()
+      appearQuestion(questionId);
+    });
 }
 
 let questionDone = 0
@@ -432,7 +459,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const randomQuestion = questions[Math.floor(
           Math.random() * questions.length)];
       const questionId = randomQuestion.question_id;
-      appearQuestion(questionId)
+      displaySnowmanAndQuizBox()
+      await appearGreeting(airportId, questionId)
     });
   });
 })

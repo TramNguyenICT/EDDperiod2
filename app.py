@@ -337,7 +337,7 @@ def get_weather_data():
             # Prepare the required data
             weather_info = {
                 "description": weather_data["weather"][0]["description"],
-                "temperature": weather_data["main"]["temp"] - 273.15  # Convert temperature to Celsius
+                "temperature": round(weather_data["main"]["temp"] - 273.15,2)
             }
             cursor.close()
             connection.close()
