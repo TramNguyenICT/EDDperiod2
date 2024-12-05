@@ -53,21 +53,9 @@ async function updateAirportDone(currentAirport) {
     }
 }
 //get airport greeting
-async function getAirportGreeting(airportId){
+async function getAirportData(airportId){
   try {
-    const response = await fetch(`/airport_greeting?airport_id=${airportId}`)
-    const responseJson = await response.json()
-    return responseJson  //print out and check how the json -> point to the goal data
-  }
-  catch(error){
-    console.log(error.message)
-  }
-}
-
-//get airport reindeer id
-async function getAirportReindeerId(airportId){
-  try {
-    const response = await fetch(`/get_airport_reindeer_id?airport_id=${airportId}`)
+    const response = await fetch(`http://localhost:5000//get_airport_data?airport_id=${airportId}`)
     const responseJson = await response.json()
     return responseJson  //print out and check how the json -> point to the goal data
   }
@@ -186,7 +174,19 @@ async function updateFinalResult(playerId, result) {
 async function getWeatherData(airportId){
   try{
     const response = await fetch(`/get_weather_data?airport_id=${airportId}`)
-    const resposneJson = await response.json()
+    const responseJson = await response.json()
+    return responseJson
+  }
+  catch (error){
+    console.log(error)
+  }
+}
+
+
+async function fetchQuestionsByGroup(countryGroup){
+  try{
+    const response = await fetch(`http://127.0.0.1:5000/get_question_bank_country_group?country_group=${countryGroup}`)
+    const responseJson = await response.json()
     return resposneJson
   }
   catch (error){
@@ -358,10 +358,8 @@ async function appearQuestion(questionId){
   console.log(questionData)
   const question_content = questionData.question_content;
   const right_answer = questionData.right_answer;
-  console.log(right_answer)
   const win_message = questionData.win_message;
   const lose_message = questionData.lose_message;
-  displaySnowmanAndQuizBox()
   const questionField = document.querySelector('.quiz_paragraph')
   questionField.innerHTML = question_content
   let isCorrect;
@@ -371,10 +369,9 @@ async function appearQuestion(questionId){
     const answer = input.value.trim().toLowerCase();
     console.log(answer)
     let isCorrect;
-    if (answer === right_answer){
+    if (answer === right_answer) {
       isCorrect = true
-    }
-    else {
+    } else {
       isCorrect = false
     }
     if (isCorrect) {
@@ -385,7 +382,10 @@ async function appearQuestion(questionId){
     input.remove();
     submit.removeEventListener('click', handleSubmit);
     submit.remove();
-
+    questionDone++
+  });
+}
+async function afterQuestion(questionId){
     const nextButton = createElement('button', {
       type: 'button',
       class: 'next',
@@ -402,63 +402,45 @@ async function appearQuestion(questionId){
     nextButton.innerText = 'Next'
     const flexDiv = document.querySelector('.flex')
     flexDiv.appendChild(nextButton);
-    input.remove()
     const next = document.querySelector('.next')
     nextButton.addEventListener('click',async function(evt) {
     const snowman_and_quiz_box = document.querySelector('.snowman_and_quiz_box')
     snowman_and_quiz_box.remove()
     });
-  })
-
-
-  questionDone++
 }
-/*
-function setupMap() {
-  const airportImages = document.querySelectorAll('.airport-image');
-  airportImages.forEach((image) => {
-    image.addEventListener('click', async () => {
-      const airportId = image.dataset.airportId; // Example: 1017
-      const countryGroup = image.dataset.countryGroup;
 
+async function appearGreeting(airportId){
+  const airportData = await getAirportData(airportId)
+  const greeting = airportData.greeting
+}
+
+let questionDone = 0
+
+//while (questionDone <7){
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  const airportDivs = document.querySelectorAll(".airport");
+  console.log(airportDivs)
+  airportDivs.forEach((div) => {
+    div.addEventListener('click', async function() {
+      console.log("Airport clicked:", div.id);
+      const airportId = div.id
+      const airportData = await getAirportData(airportId)
+      const countryGroup = airportData.country_group
       const questions = await fetchQuestionsByGroup(countryGroup);
-      const availableQuestions = questions.filter(q => q.done === 0);
-
-      if (availableQuestions.length > 0) {
-        const randomQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-        await updateQuestionDone(randomQuestion.id);
-        displayQuestion(randomQuestion.id);
-      } else {
-        alert('No available questions for this group.');
-      }
-      await updateAirportDone(airportId);
+      const randomQuestion = questions[Math.floor(
+          Math.random() * questions.length)];
+      const questionId = randomQuestion.question_id;
+      appearQuestion(questionId)
     });
   });
-}
+})
 
-async function setupPart2() {
-  alert('Starting Part 2!');
-
-  while (questionDone < 10) {
-    const airports = await fetchTwoRandomAirports();
-    if (!airports || airports.length < 2) {
-      console.log('Error fetching random airports.');
-      break;
-    }
-
-    const leftAirport = airports[0];
-    const rightAirport = airports[1];
-    displayAirportChoices(leftAirport, rightAirport);
-
-    // Wait for user choice
-    const selectedAirportId = await handleAirportChoice(leftAirport, rightAirport);
-    if (!selectedAirportId) {
-      console.log('Error in user selection.');
-      break;
-    }
-
-    const questions = await fetchQuestionsByAirport(selectedAirportId);
-    const availableQuestions = questions.filter(q => q.done === 0);
+/*
+part 2: random 1 airport
+   random 1 question id
+   add event to left + right arrow to display question
 
     if (availableQuestions.length > 0) {
       const randomQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
@@ -559,5 +541,4 @@ while (questionDone < 7) {
   }
   */
 
-let questionDone = 0
-appearQuestion('Q51')
+

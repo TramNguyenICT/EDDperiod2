@@ -26,10 +26,10 @@ CORS(app)
 /reset_airport
 /reset_grinch
 /insert_player
-/update_airport
+/update_airport --> change to get_airport_data
 /update_airport_done
 /airport_greeting
-/get_airport_reindeer_id
+/get_airport_reindeer_id --> change to get_airport_data
 /get_letter_count
 /update_letter_count
 /get_letter_change_grinch
@@ -37,9 +37,9 @@ CORS(app)
 /get_reindeer_id
 /update_final_result
 /get_weather_data
-/get_city_id
-/get_airport_country_group
-/get_question_bank_country_group
+/get_city_id --> change to get_airport_data
+/get_airport_country_group --> change to get_airport_data
+/get_question_bank_country_group --> merge to get_question
 '''
 
 # reset all airport to FALSE
@@ -133,38 +133,46 @@ def update_airport_done():
         return jsonify({"error": "Internal server error"}), 500
 
 #get airport greeting
-@app.route('/airport_greeting',methods=['GET'])
-def airport_greeting():
+@app.route('/get_airport_data',methods=['GET'])
+def get_airport_data():
     try:
         airport_id = request.args.get('airport_id')
+        if not airport_id:
+            return jsonify({"error": "Missing 'airport_id' parameter"}), 400
         connection = get_db_connection()
         cursor = connection.cursor()
-        sql12 = f"SELECT greeting FROM airport WHERE airport_id = {airport_id}"
-        cursor.execute(sql12)
-        greeting = cursor.fetchone()
+        sql = """
+            SELECT airport_name, city_id, country, country_group,
+                   greeting, challenge, letter_change, is_finished, grinch_id
+            FROM airport
+            WHERE airport_id = %s
+        """
+        cursor.execute(sql, (airport_id,))
+        airport_data = cursor.fetchone()
+
+        # Check if the data is found
+        if not airport_data:
+            return jsonify({"error": "Airport not found"}), 404
+
+        # Prepare the data as a JSON response
+        result = {
+            "airport_name": airport_data[0],
+            "city_id": airport_data[1],
+            "country": airport_data[2],
+            "country_group": airport_data[3],
+            "greeting": airport_data[4],
+            "challenge": airport_data[5],
+            "letter_change": airport_data[6],
+            "is_finished": airport_data[7],
+            "grinch_id": airport_data[8]
+        }
         cursor.close()
         connection.close()
-        return jsonify(greeting)
+        return jsonify(result)
     except Exception as e:
-        app.logger.error(f"Error fetching airport greeting: {e}")
+        app.logger.error(f"Error retrieving question: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-#get airport reindeer id
-@app.route('/get_airport_reindeer_id', methods=['GET'])
-def get_airport_reindeer_id():
-    airport_id = request.args.get('airport_id')
-
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-
-    sql13 = f"SELECT reindeer_id FROM airport WHERE airport_id = {airport_id}"
-    cursor.execute(sql13)
-    reindeer_id = cursor.fetchone()
-
-    cursor.close()
-    connection.close()
-
-    return jsonify(reindeer_id)
 
 #get letter count
 @app.route('/get_letter_count', methods=['GET'])
@@ -341,54 +349,22 @@ def get_weather_data():
     except requests.exceptions.RequestException as ex:
         return jsonify({"error": f"Request failed: {ex}"}), 500
 
-# Route to get city_id from the airport table
-@app.route('/get_city_id', methods=['GET'])
-def get_city_id():
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-
-        sql_city_id = "SELECT airport_id, city_id FROM airport"
-        cursor.execute(sql_city_id)
-        city_data = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return jsonify({"status": "success", "city_ids": city_data})
-
-    except Exception as e:
-        app.logger.error(f"Error fetching city_id: {e}")
-        return jsonify({"status": "error", "message": "Could not fetch city_id"}), 500
-
-# Route to get country_group from the airport table
-@app.route('/get_airport_country_group', methods=['GET'])
-def get_airport_country_group():
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-        sql_country_group = "SELECT airport_id, country_group FROM airport"
-        cursor.execute(sql_country_group)
-        country_group_data = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return jsonify({"status": "success", "country_groups": country_group_data})
-
-    except Exception as e:
-        app.logger.error(f"Error fetching country_group from airport table: {e}")
-        return jsonify({"status": "error", "message": "Could not fetch country_group"}), 500
-
 # Route to get country_group from the question_bank table
 @app.route('/get_question_bank_country_group', methods=['GET'])
 def get_question_bank_country_group():
     try:
+        country_group = request.args.get('country_group')
+        if not country_group:
+            return jsonify({"status": "error", "message": "Missing country_group parameter"}), 400
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
-        sql_question_group = "SELECT question_id, country_group FROM question_bank"
-        cursor.execute(sql_question_group)
-        question_group_data = cursor.fetchall()
+        sql_question_group = "SELECT question_id FROM question_bank WHERE country_group = %s AND done ='0'"
+        cursor.execute(sql_question_group, (country_group,))
+        all_question_id_in_a_country = cursor.fetchall()
         cursor.close()
         connection.close()
-        return jsonify({"status": "success", "question_bank_country_groups": question_group_data})
+        return jsonify(all_question_id_in_a_country)
     except Exception as e:
         app.logger.error(f"Error fetching country_group from question_bank table: {e}")
         return jsonify({"status": "error", "message": "Could not fetch country_group"}), 500
