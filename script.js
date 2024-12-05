@@ -384,6 +384,7 @@ async function appearQuestion(questionId){
     questionDone++
   });
 }
+
 async function afterQuestion(){
     const nextButton = createElement('button', {
       type: 'button',
@@ -441,7 +442,21 @@ async function appearGreeting(airportId, questionId){
     });
 }
 
-let questionDone = 0
+
+/*
+// Initialize Game
+async function initializeGame() {
+  questionDone = 0;
+  await updateAirportDone(1001); // Set Helsinki's is_finished to 1
+  setupMap(); // Set up initial map
+}
+
+// Start Game
+initializeGame();
+  */
+// initialization + set is_finished of Helsinki to 1
+questionDone = 0
+updateAirportDone(1001)
 
 //while (questionDone <7){
 
@@ -491,82 +506,7 @@ part 2: random 1 airport
     window.location.href = '/winning.html';
   }
 }
+*/
 
-
-async function fetchTwoRandomAirports() {
-  try {
-    const response = await fetch('/get_two_random_airports');
-    const data = await response.json();
-    return data.airports || [];
-  } catch (error) {
-    console.log('Error fetching random airports:', error.message);
-    return [];
-  }
-}
-
-function displayAirportChoices(leftAirport, rightAirport) {
-  document.body.innerHTML = ''; // Clear current content
-
-  const leftButton = createElement('button', {
-    innerText: `Left: ${leftAirport.name}`,
-    id: 'left-airport',
-  });
-
-  const rightButton = createElement('button', {
-    innerText: `Right: ${rightAirport.name}`,
-    id: 'right-airport',
-  });
-
-  document.body.appendChild(leftButton);
-  document.body.appendChild(rightButton);
-}
-
-function handleAirportChoice(leftAirport, rightAirport) {
-  return new Promise((resolve) => {
-    document.getElementById('left-airport').addEventListener('click', () => {
-      resolve(leftAirport.id);
-    });
-    document.getElementById('right-airport').addEventListener('click', () => {
-      resolve(rightAirport.id);
-    });
-  });
-}
-
-async function fetchQuestionsByAirport(airportId) {
-  try {
-    const response = await fetch(`/get_questions_by_airport?airport_id=${airportId}`);
-    const data = await response.json();
-    return data.questions || [];
-  } catch (error) {
-    console.log('Error fetching questions by airport:', error.message);
-    return [];
-  }
-}
-
-// Initialize Game
-async function initializeGame() {
-  questionDone = 0;
-  await updateAirportDone(1001); // Set Helsinki's is_finished to 1
-  setupMap(); // Set up initial map
-}
-
-// Start Game
-initializeGame();
-
-// initialization + set is_finished of Helsinki to 1
-questionDone = 0
-updateAirportDone(1001)
-getQuestion(1017)
-while (questionDone < 7) {
-  document.body.innerHTML = ''; // Clear current elements
-  setupMap();
-  } else {
-  setupPart2();
-      }
-    });
-  } else {
-    console.log('No question data available for airport:', airportId);
-  }
-  */
 
 
