@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Background Map*/
+.map-container {
+    position: relative;
+    width: 100%;
+    height: auto; /* Full height of the viewport */
+    overflow: auto; /* Allow scrolling when map is larger than the container */
+    display: flex;
+    justify-content: center; /* Center map horizontally */
+    align-items: center; /* Center map vertically */
+}
+
+.map-image {
+    width: 100%;
+    height: auto; /* Ensures the map scales proportionally */
+    object-fit: contain;
+    z-index: -1;
+}
+.airport {
+    position: absolute;
+    cursor: pointer;
+}
+
+.airport-icon {
+    width: auto;
+    height: auto;
+    max-width: 40px;
+    max-height: 40px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.airport-icon:hover {
+    transform: scale(1.4);
+    z-index: 2;
+}
+
+.airport .tooltip {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background: antiquewhite;
+    color: #225400;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0; /* Initially hidden */
+    pointer-events: none; /* Prevent interference with hover */
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.airport:hover .tooltip {
+    opacity: 1; /* Show tooltip on hover */
+}

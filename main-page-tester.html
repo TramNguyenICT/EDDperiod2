@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elf Delivery Dash - Coordinate Clicker</title>
+    <style>
+        .map-container {
+            position: relative;
+            width: 80%;
+            height: auto;
+            margin: 0 auto;
+        }
+        .map-image {
+            width: 100%;
+            height: auto;
+        }
+        #coordinates {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container">
+        <!-- Map Image -->
+        <img src="Main%20page/Main%20page%20pics/Map%20image.png" alt="Nordic Map" class="map-image" id="mapImage">
+
+        <div id="coordinates"></div> <!-- Display coordinates here -->
+    </div>
+
+    <script>
+        document.getElementById('mapImage').addEventListener('click', function(event) {
+            var rect = event.target.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+
+            // Calculate percentage values
+            var xPercent = (x / rect.width) * 100;
+            var yPercent = (y / rect.height) * 100;
+
+            // Display the coordinates in the #coordinates div
+            document.getElementById('coordinates').innerHTML =
+                'Top: ' + yPercent.toFixed(2) + '% , Left: ' + xPercent.toFixed(2) + '%';
+
+            console.log('Top: ' + yPercent.toFixed(2) + '% , Left: ' + xPercent.toFixed(2) + '%');
+        });
+    </script>
+</body>
+</html>
