@@ -22,6 +22,9 @@ app = Flask(__name__)
 
 
 '''list of route
+/reset_airport
+/reset_grinch
+/insert_player
 /update_airport
 /update_airport_done
 /airport_greeting
@@ -33,8 +36,9 @@ app = Flask(__name__)
 /get_reindeer_id
 /update_final_result
 /get_weather_data
-/get_two_random_airports
-/get_questions_by_airport
+/get_city_id
+/get_airport_country_group
+/get_question_bank_country_group
 '''
 
 # reset all airport to FALSE
