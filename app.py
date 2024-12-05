@@ -162,35 +162,65 @@ def get_airport_reindeer_id():
     return jsonify(reindeer_id)
 
 #get letter count
-@app.route('/get_letter_count',methods=['GET'])
+@app.route('/get_letter_count', methods=['GET'])
 def get_letter_count():
     player_id = request.args.get('player_id')
+
+    # Using get_db_connection to establish a new connection
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # Executing the query to get letter_count from player table
     sql14 = f"SELECT letter_count FROM player WHERE player_id = {player_id}"
     cursor.execute(sql14)
     letter_count = cursor.fetchone()
-    connection.commit()
+
+    # Close the cursor and connection after use
+    cursor.close()
+    connection.close()
+
     return jsonify(letter_count)
 
 #update letter count
-@app.route('/update_letter_count',methods=['POST'])
+@app.route('/update_letter_count', methods=['POST'])
 def update_letter_count():
     data = request.json
-    letter_count= data['letter_count']
+    letter_count = data['letter_count']
     player_id = data['player_id']
+
+    # Using get_db_connection to establish a new connection
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # SQL query to update letter_count in player table
     sql15 = f"UPDATE player SET letter_count = {letter_count} WHERE player_id = '{player_id}'"
-    cursor.execute(sql5)
+    cursor.execute(sql15)
     connection.commit()
-    return jsonify({"status":"success"})
+
+    # Close the cursor and connection after use
+    cursor.close()
+    connection.close()
+
+    return jsonify({"status": "success"})
 
 #get letter of grinch quiz
-@app.route('/get_letter_change_grinch',methods=['GET'])
+@app.route('/get_letter_change_grinch', methods=['GET'])
 def get_letter_change_grinch():
     grinch_challenge = request.args.get('grinch_challenge')
-    sql16= f"SELECT letter_change_grinch FROM grinch WHERE grinch_challenge_id = {grinch_challenge}"
+
+    # Using get_db_connection to establish a new connection
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # SQL query to get letter_change_grinch from grinch table
+    sql16 = f"SELECT letter_change_grinch FROM grinch WHERE grinch_challenge_id = {grinch_challenge}"
     cursor.execute(sql16)
     letter_count_grinch = cursor.fetchone()
-    connection.commit()
+
+    # Close the cursor and connection after use
+    cursor.close()
     connection.close()
+
     return jsonify(letter_count_grinch)
 
 #get question data (to a tupple)
@@ -264,43 +294,102 @@ def get_reindeer_id():
         return jsonify({"error": "Internal server error"}), 500
 
 #update final result to player table
-@app.route('/update_final_result',methods=['POST'])
+@app.route('/update_final_result', methods=['POST'])
 def update_final_result():
     data = request.json
-    result= data['result']
+    result = data['result']
     player_id = data['player_id']
+
+    # Using get_db_connection to establish a new connection
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # SQL query to update the final result in player table
     sql20 = f"UPDATE player SET result = '{result}' WHERE player_id = '{player_id}'"
     cursor.execute(sql20)
     connection.commit()
-    return jsonify({"status":"success"})
 
-@app.route('/get_weather_data',methods=['GET'])
-def get_weather_data(airport_id):
-    sql237 = f"SELECT city_id FROM airport WHERE airport_id = '{airpoirt_id}'"
-    cursor.executed(sql237)
-    city_id = cursor.fetchone()
-    request = f"https://api.openweathermap.org/data/2.5/weather?id={city_id}&appid={apikey}"
+    # Close the cursor and connection after use
+    cursor.close()
+    connection.close()
+
+    return jsonify({"status": "success"})
+
+
+@app.route('/get_weather_data', methods=['GET'])
+def get_weather_data():
+    airport_id = request.args.get('airport_id')
+
+    if not airport_id:
+        return jsonify({"error": "Missing 'airport_id' parameter"}), 400
+
+    # Use get_db_connection to fetch the city_id
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # Correct the query to use airport_id
+    sql237 = f"SELECT city_id FROM airport WHERE airport_id = '{airport_id}'"
+    cursor.execute(sql237)
+    city_id_data = cursor.fetchone()
+
+    # Check if city_id is found
+    if not city_id_data:
+        return jsonify({"error": "Airport not found"}), 404
+
+    city_id = city_id_data['city_id']
+
+    # Construct the request to OpenWeather API
+    request_url = f"https://api.openweathermap.org/data/2.5/weather?id={city_id}&appid={apikey}"
+
     try:
-        response = requests.get(request)
+        response = requests.get(request_url)
+
+        # Check if the API response is successful
         if response.status_code == 200:
-            json.response = response.json()
-            weather_data = {
-                "description": json.response["weather"][0]["description"],
-                "temperature": json.response["main"]-273.15
+            weather_data = response.json()  # Get the JSON response directly
+
+            # Prepare the required data
+            weather_info = {
+                "description": weather_data["weather"][0]["description"],
+                "temperature": weather_data["main"]["temp"] - 273.15  # Convert temperature to Celsius
             }
-            return jsonify(weather_data)
+
+            # Close the cursor and connection
+            cursor.close()
+            connection.close()
+
+            return jsonify(weather_info)
+        else:
+            return jsonify({"error": "Failed to fetch weather data"}), response.status_code
+
     except requests.exceptions.RequestException as ex:
-        print("Request could not be complete", ex)
+        # Handle exception for the request
+        return jsonify({"error": f"Request failed: {ex}"}), 500
 
 # Route to get city_id from the airport table
 @app.route('/get_city_id', methods=['GET'])
 def get_city_id():
     try:
+        # Get a new database connection using the helper function
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        # SQL query to get airport_id and city_id from the airport table
         sql_city_id = "SELECT airport_id, city_id FROM airport"
         cursor.execute(sql_city_id)
+
+        # Fetch the data
         city_data = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return the result as a JSON response
         return jsonify({"status": "success", "city_ids": city_data})
+
     except Exception as e:
+        # Log the error and return an internal server error response
         app.logger.error(f"Error fetching city_id: {e}")
         return jsonify({"status": "error", "message": "Could not fetch city_id"}), 500
 
@@ -308,11 +397,26 @@ def get_city_id():
 @app.route('/get_airport_country_group', methods=['GET'])
 def get_airport_country_group():
     try:
+        # Get a new database connection using the helper function
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        # SQL query to get airport_id and country_group from the airport table
         sql_country_group = "SELECT airport_id, country_group FROM airport"
         cursor.execute(sql_country_group)
+
+        # Fetch the data
         country_group_data = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return the result as a JSON response
         return jsonify({"status": "success", "country_groups": country_group_data})
+
     except Exception as e:
+        # Log the error and return an internal server error response
         app.logger.error(f"Error fetching country_group from airport table: {e}")
         return jsonify({"status": "error", "message": "Could not fetch country_group"}), 500
 
@@ -320,11 +424,26 @@ def get_airport_country_group():
 @app.route('/get_question_bank_country_group', methods=['GET'])
 def get_question_bank_country_group():
     try:
+        # Get a new database connection using the helper function
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        # SQL query to get question_id and country_group from the question_bank table
         sql_question_group = "SELECT question_id, country_group FROM question_bank"
         cursor.execute(sql_question_group)
+
+        # Fetch the data
         question_group_data = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return the result as a JSON response
         return jsonify({"status": "success", "question_bank_country_groups": question_group_data})
+
     except Exception as e:
+        # Log the error and return an internal server error response
         app.logger.error(f"Error fetching country_group from question_bank table: {e}")
         return jsonify({"status": "error", "message": "Could not fetch country_group"}), 500
 
