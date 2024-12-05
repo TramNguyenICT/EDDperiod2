@@ -455,8 +455,8 @@ async function initializeGame() {
 initializeGame();
   */
 // initialization + set is_finished of Helsinki to 1
-questionDone = 0
-updateAirportDone(1001)
+let questionDone = 0
+//updateAirportDone(1001)
 
 //while (questionDone <7){
 
