@@ -220,26 +220,126 @@ function displaySnowmanAndQuizBox() {
     z_index: '1'
   });
   document.body.appendChild(snowman_and_quiz_box);
+
   const snowmandiv = createElement('div', {
-    class: 'snowman_and_quiz_box'
+    class: 'snowman'
   }, {
-    padding: '50% 5% 5% 30%',
-    width: '800px',
-    height: 'auto'
+    position: 'absolute',
+    width: '20%',
+    left: '13%',
+    z_index: '2',
+    margin_left: '-10%',
+    margin_bottom: '2rem'
   });
-  document.body.appendChild(grayFrame);
-}
-function displayGrayFrame() {
-  const grayFrame = createElement('img', {
-    src: 'img/grayframe.png',
-    alt: 'grayFrame'
+  snowman_and_quiz_box.appendChild(snowmandiv);
+
+  const snowmanImg = createElement('img', {
+    src: 'img/snowman.png',
+    alt: 'Smiling snowman',
+    class: 'snowman_img'
   }, {
-    padding: '50% 5% 5% 30%',
-    width: '800px',
-    height: 'auto'
+    width: '100%',
+    height: 'auto',
+    background_color: 'transparent'
   });
-  document.body.appendChild(grayFrame);
+  snowmandiv.appendChild(snowmanImg);
+
+  const quiz_division = createElement('div', {
+    class: 'quiz_division'
+  }, {
+    width: '70%',
+    height: '25rem',
+    min_height: '20rem',
+    background_color: 'rgba(0, 0, 0, 0.1)',
+    padding: '2rem',
+    border_radius: '0.5rem',
+    box_shadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+    backdrop_filter: 'blur(10px)',
+    margin_left: '19.7%',
+    z_index: '1',
+    display: 'flex',
+    flex_direction: 'column',
+    justify_content: 'center'
+  });
+  snowman_and_quiz_box.appendChild(quiz_division);
+  const snowmanHeading = createElement('h2', {
+    class: 'snowman-heading'
+  }, {
+    font_size: '3rem',
+    font_weight: '700',
+    color: 'white',
+    margin_bottom: '1rem',
+    text_align: 'left',
+    width: '100%'
+  });
+  snowmanHeading.innerText = 'SNOWMAN:'
+  quiz_division.appendChild(snowmanHeading);
+
+  const quizParagraph = createElement('p', {
+    class: 'quiz_paragraph'
+  }, {
+    color: '#1F2937',
+    font_size: '2.5rem',
+    font_weight: '600',
+    margin_bottom: '2rem',
+    text_align: 'center',
+  });
+  quiz_division.appendChild(quizParagraph);
+
+  const flexDiv = createElement('div', {
+    class: 'flex'
+  }, {
+    display: 'flex',
+    justify_content: 'space-between',
+    margin_top: 'auto',
+    width: '100%'
+  });
+  quiz_division.appendChild(flexDiv);
+
+  const textInput = createElement('input', {
+    type: 'text',
+    class: 'query',
+    placeholder: 'Type your answer here'
+  }, {
+    flex: '1',
+    border: '1px solid #D1D5DB',
+    padding: '0.5rem',
+    border_radius: '0.5rem',
+    margin_right: '1rem',
+    font_size: '2rem'
+  });
+  flexDiv.appendChild(textInput);
+
+  const submitButton = createElement('button', {
+    type: 'button',
+    class: 'submit',
+  }, {
+    background_color: '#3B82F6',
+    color: 'white',
+    font_weight: '700',
+    font_size: '1.5rem',
+    padding: '0.5rem 1rem',
+    border_radius: '0.25rem',
+    transition: 'background-color 0.2s ease',
+    cursor: 'pointer',
+  });
+  submitButton.innerText = 'Submit'
+  flexDiv.appendChild(submitButton);
+
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .submit:hover {
+      background-color: #1D4ED8;
+    }
+    .submit:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+  `;
+
+  document.head.appendChild(style);
 }
+
 
 async function appearQuestion(airportId){
   displaySnowman()
