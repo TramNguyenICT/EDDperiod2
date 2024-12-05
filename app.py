@@ -3,6 +3,7 @@ import requests
 import mysql.connector
 import json
 import random
+from flask_cors import CORS
 
 apikey="c5a5b9f230f4a2ffabacf63e19350867"
 
@@ -19,7 +20,7 @@ def get_db_connection():
     )
     return connection
 app = Flask(__name__)
-
+CORS(app)
 
 '''list of route
 /reset_airport

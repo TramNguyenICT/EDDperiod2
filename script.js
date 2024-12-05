@@ -131,7 +131,7 @@ async function getLetterChangeGrinch(grinchChallenge){
 //get question data
 async function getQuestion(questionId){
   try {
-    const response = await fetch(`/get_question?question_id=${questionId}`)
+    const response = await fetch(`http://localhost:5000/get_question?question_id=${questionId}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -195,17 +195,28 @@ async function getWeatherData(airportId){
 }
 // Logic and HTML part
 
-function createElement(type, attributes, styles) {
-  const element = document.createElement(type);
-  for (const key in attributes) element[key] = attributes[key];
-  for (const key in styles) element.style.setProperty(key, styles[key]);
+function createElement(tag, attributes, styles) {
+  const element = document.createElement(tag);
+
+  if (attributes) {
+    for (const [key, value] of Object.entries(attributes)) {
+      element.setAttribute(key, value);
+    }
+  }
+
+  if (styles) {
+    for (const [key, value] of Object.entries(styles)) {
+      element.style[key] = value;
+    }
+  }
   return element;
 }
 
 
 //Test to appear the question
 function displaySnowmanAndQuizBox() {
-  const snowman_and_quiz_box = createElement('div', {
+  // Main container
+  const snowmanAndQuizBox = createElement('div', {
     class: "snowman_and_quiz_box",
   }, {
     position: 'absolute',
@@ -214,25 +225,27 @@ function displaySnowmanAndQuizBox() {
     width: '100%',
     height: '100%',
     display: 'flex',
-    justify_contentcontent: 'flex-start',
-    align_itemsitems: 'flex-end',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
     padding: '1rem',
-    z_index: '1'
+    zIndex: '1',
   });
-  document.body.appendChild(snowman_and_quiz_box);
+  document.body.appendChild(snowmanAndQuizBox);
 
-  const snowmandiv = createElement('div', {
+  // Snowman div
+  const snowmanDiv = createElement('div', {
     class: 'snowman'
   }, {
     position: 'absolute',
     width: '20%',
     left: '13%',
-    z_index: '2',
-    margin_left: '-10%',
-    margin_bottom: '2rem'
+    zIndex: '2',
+    marginLeft: '-10%',
+    marginBottom: '2rem',
   });
-  snowman_and_quiz_box.appendChild(snowmandiv);
+  snowmanAndQuizBox.appendChild(snowmanDiv);
 
+  // Snowman image
   const snowmanImg = createElement('img', {
     src: 'img/snowman.png',
     alt: 'Smiling snowman',
@@ -240,92 +253,93 @@ function displaySnowmanAndQuizBox() {
   }, {
     width: '100%',
     height: 'auto',
-    background_color: 'transparent'
+    backgroundColor: 'transparent',
   });
-  snowmandiv.appendChild(snowmanImg);
+  snowmanDiv.appendChild(snowmanImg);
 
-  const quiz_division = createElement('div', {
+  // Quiz box
+  const quizDivision = createElement('div', {
     class: 'quiz_division'
   }, {
     width: '70%',
     height: '25rem',
-    min_height: '20rem',
-    background_color: 'rgba(0, 0, 0, 0.1)',
+    minHeight: '20rem',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     padding: '2rem',
-    border_radius: '0.5rem',
-    box_shadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-    backdrop_filter: 'blur(10px)',
-    margin_left: '19.7%',
-    z_index: '1',
+    borderRadius: '0.5rem',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+    backdropFilter: 'blur(10px)',
+    marginLeft: '19.7%',
+    zIndex: '1',
     display: 'flex',
-    flex_direction: 'column',
-    justify_content: 'center'
+    flexDirection: 'column',
+    justifyContent: 'center',
   });
-  snowman_and_quiz_box.appendChild(quiz_division);
+  snowmanAndQuizBox.appendChild(quizDivision);
+
+  // Snowman heading
   const snowmanHeading = createElement('h2', {
     class: 'snowman-heading'
-  }, {
-    font_size: '3rem',
-    font_weight: '700',
-    color: 'white',
-    margin_bottom: '1rem',
-    text_align: 'left',
-    width: '100%'
   });
-  snowmanHeading.innerText = 'SNOWMAN:'
-  quiz_division.appendChild(snowmanHeading);
+  snowmanHeading.innerText = 'SNOWMAN:';
+  quizDivision.appendChild(snowmanHeading);
 
+  // Quiz paragraph
   const quizParagraph = createElement('p', {
     class: 'quiz_paragraph'
-  }, {
+  },{
     color: '#1F2937',
-    font_size: '2.5rem',
-    font_weight: '600',
-    margin_bottom: '2rem',
-    text_align: 'center',
+    fontSize: '2.5rem',
+    fontWeight: '600',
+    marginBottom: '2rem',
+    textAlign: 'center',
   });
-  quiz_division.appendChild(quizParagraph);
+  quizDivision.appendChild(quizParagraph);
 
+  // Flex div
   const flexDiv = createElement('div', {
     class: 'flex'
   }, {
     display: 'flex',
-    justify_content: 'space-between',
-    margin_top: 'auto',
-    width: '100%'
+    justifyContent: 'space-between',
+    marginTop: 'auto',
+    width: '100%',
   });
-  quiz_division.appendChild(flexDiv);
+  quizDivision.appendChild(flexDiv);
 
+  // Text input
   const textInput = createElement('input', {
     type: 'text',
     class: 'query',
-    placeholder: 'Type your answer here'
+    placeholder: 'Type your answer here',
   }, {
     flex: '1',
     border: '1px solid #D1D5DB',
     padding: '0.5rem',
-    border_radius: '0.5rem',
-    margin_right: '1rem',
-    font_size: '2rem'
+    borderRadius: '0.5rem',
+    marginRight: '1rem',
+    fontSize: '2rem',
   });
   flexDiv.appendChild(textInput);
 
+  // Submit button
   const submitButton = createElement('button', {
     type: 'button',
     class: 'submit',
   }, {
-    background_color: '#3B82F6',
+    backgroundColor: '#3B82F6',
     color: 'white',
-    font_weight: '700',
-    font_size: '1.5rem',
+    fontWeight: '700',
+    fontSize: '1.5rem',
     padding: '0.5rem 1rem',
-    border_radius: '0.25rem',
+    borderRadius: '0.25rem',
     transition: 'background-color 0.2s ease',
     cursor: 'pointer',
   });
-  submitButton.innerText = 'Submit'
+  submitButton.innerText = 'Submit';
   flexDiv.appendChild(submitButton);
 
+  // Style for hover and focus
   const style = document.createElement('style');
   style.innerHTML = `
     .submit:hover {
@@ -336,50 +350,70 @@ function displaySnowmanAndQuizBox() {
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
     }
   `;
-
   document.head.appendChild(style);
 }
 
+async function appearQuestion(questionId){
+  const questionData =await getQuestion(questionId)
+  console.log(questionData)
+  const question_content = questionData.question_content;
+  const right_answer = questionData.right_answer;
+  console.log(right_answer)
+  const win_message = questionData.win_message;
+  const lose_message = questionData.lose_message;
+  displaySnowmanAndQuizBox()
+  const questionField = document.querySelector('.quiz_paragraph')
+  questionField.innerHTML = question_content
+  let isCorrect;
+  const input = document.querySelector('.query')
+  const submit = document.querySelector('.submit')
+  submit.addEventListener('click',function handleSubmit() {
+    const answer = input.value.trim().toLowerCase();
+    console.log(answer)
+    let isCorrect;
+    if (answer === right_answer){
+      isCorrect = true
+    }
+    else {
+      isCorrect = false
+    }
+    if (isCorrect) {
+      questionField.innerHTML = win_message
+    } else {
+      questionField.innerHTML = lose_message
+    }
+    input.remove();
+    submit.removeEventListener('click', handleSubmit);
+    submit.remove();
 
-async function appearQuestion(airportId){
-  displaySnowman()
-  displayGrayFrame()
-  if (questionData && questionData.question) {
-    const questionText = createElement('p', { innerText: questionData.question });
-    document.body.appendChild(questionText);
-
-    const answerForm = createElement('form', { action: '#' });
-    const inputField = createElement('input', { id: 'query', name: 'answer', type: 'text' });
-    const submitButton = createElement('input', { id: 'submit', type: 'submit', value: 'Submit' });
-
-    answerForm.appendChild(inputField);
-    answerForm.appendChild(submitButton);
-    document.body.appendChild(answerForm);
-
-    answerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userAnswer = inputField.value;
-      const isCorrect = userAnswer === questionData.answer;
-
-      if (isCorrect) {
-        alert(questionData.win_message);
-      } else {
-        alert(questionData.lose_message);
-      }
-      questionDone++;
-      if (questionDone < 7) {
-        document.body.innerHTML = ''; // Clear current elements
-        setupMap();
-      } else {
-        alert('Moving to Part 2...');
-        setupPart2();
-      }
+    const nextButton = createElement('button', {
+      type: 'button',
+      class: 'next',
+      }, {
+      backgroundColor: '#3B82F6',
+      color: 'white',
+      fontWeight: '700',
+      fontSize: '1.5rem',
+      padding: '0.5rem 1rem',
+      borderRadius: '0.25rem',
+      transition: 'background-color 0.2s ease',
+      cursor: 'pointer',
     });
-  } else {
-    console.log('No question data available for airport:', airportId);
-  }
-}
+    nextButton.innerText = 'Next'
+    const flexDiv = document.querySelector('.flex')
+    flexDiv.appendChild(nextButton);
+    input.remove()
+    const next = document.querySelector('.next')
+    nextButton.addEventListener('click',async function(evt) {
+    const snowman_and_quiz_box = document.querySelector('.snowman_and_quiz_box')
+    snowman_and_quiz_box.remove()
+    });
+  })
 
+
+  questionDone++
+}
+/*
 function setupMap() {
   const airportImages = document.querySelectorAll('.airport-image');
   airportImages.forEach((image) => {
@@ -512,5 +546,18 @@ initializeGame();
 // initialization + set is_finished of Helsinki to 1
 questionDone = 0
 updateAirportDone(1001)
-*/
 getQuestion(1017)
+while (questionDone < 7) {
+  document.body.innerHTML = ''; // Clear current elements
+  setupMap();
+  } else {
+  setupPart2();
+      }
+    });
+  } else {
+    console.log('No question data available for airport:', airportId);
+  }
+  */
+
+let questionDone = 0
+appearQuestion('Q51')
