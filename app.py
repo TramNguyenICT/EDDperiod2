@@ -415,6 +415,7 @@ def get_airport_country_group():
         # Return the result as a JSON response
         return jsonify({"status": "success", "country_groups": country_group_data})
 
+
     except Exception as e:
         # Log the error and return an internal server error response
         app.logger.error(f"Error fetching country_group from airport table: {e}")

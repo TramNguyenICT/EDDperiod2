@@ -201,6 +201,7 @@ function createElement(type, attributes, styles) {
   for (const key in styles) element.style.setProperty(key, styles[key]);
   return element;
 }
+
 /*
 //Test to appear the question
 function displaySnowman() {
