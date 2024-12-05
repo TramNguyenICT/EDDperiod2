@@ -1,0 +1,112 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.background{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    opacity: 0.7;
+}
+
+.snowman_and_quiz_box{
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 1rem;
+    z-index: 1;
+}
+
+.snowman {
+    position: absolute;
+    width: 20%;
+    left: 13%;
+    z-index: 2;
+    margin-left: -10%;
+    margin-bottom: 2rem;
+}
+
+.snowman_img {
+    width: 100%;
+    height: auto;
+    background-color: transparent;
+}
+
+.quiz_division {
+    width: 70%;
+    height: 25rem;
+    min-height: 20rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 2rem; /* 24px */
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* Tailwind's lg shadow */
+    backdrop-filter: blur(10px);
+    margin-left: 19.7%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.snowman-heading {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    text-align: left;
+    width: 100%;
+}
+
+.quiz_paragraph{
+    color: #1F2937;
+    font-size: 2.5rem;
+    font-weight: 600; /* Semi-bold */
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    width: 100%;
+}
+
+.query{
+    flex: 1;
+    border: 1px solid #D1D5DB;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    font-size: 2rem;
+}
+
+.submit {
+    background-color: #3B82F6;
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.submit:hover {
+  background-color: #1D4ED8;
+}
+
+.submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
