@@ -1,10 +1,10 @@
 'use strict';
 /* List function 06/12/2024
+resetAirport (new)
 updateAirport(playerId, currentAirport)
 updateAirportDone(currentAirport)
 getAirportData(airportId)
-export async function insertPlayer(playerName)
-getplayerId()
+insertPlayer(playerName)
 updateReindeerToPlayer(playerId,reindeerId)
 getLetterCount(playerId)
 updateLetterCount(playerId, letterCount)
@@ -20,6 +20,32 @@ appearQuestion(questionId)
 afterQuestion()
 appearGreeting(airportId, questionId)
  */
+
+//reset all airport to 0
+export async function resetAirport() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/reset_airport', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+            console.log("Airport successfully reset!");
+        } else {
+            console.error("Failed to reset airport:", result.error || "Unknown error");
+        }
+    } catch (error) {
+        console.error("Error resetting airport:", error.message);
+    }
+}
 
 //update current airport
 export async function updateAirport(playerId, currentAirport) {
@@ -84,6 +110,18 @@ export async function getAirportData(airportId){
   }
 }
 
+//get remain airports
+export async function getRemainedAirport(){
+  try{
+    const response = await fetch(`http://127.0.0.1:5000/get_remain_airports`)
+    const responseJson = await response.json()
+    return responseJson  //print out and check how the json -> point to the goal data
+  }
+  catch(error){
+    console.log(error.message)
+  }
+}
+
 //insert player
 export async function insertPlayer(playerName) {
     try {
@@ -99,7 +137,10 @@ export async function insertPlayer(playerName) {
       const data = await response.json();
 
       if (data.status === 'success') {
+        const playerId = data.player_id;
         console.log("Player inserted successfully!");
+        sessionStorage.setItem('player_id', playerId);
+        return playerId;
       }
       else{
        console.log("Error inserting player:", data.message)
@@ -108,18 +149,6 @@ export async function insertPlayer(playerName) {
     catch(error){
       console.log("Fetch error:", error.message)
     }
-}
-
-//get player_id
-export async function getplayerId(){
-  try {
-    const response = await fetch(`http://127.0.0.1:5000/get_player_id`)
-    const responseJson = await response.json()
-    return responseJson  //print out and check how the json -> point to the goal data
-  }
-  catch(error){
-    console.log(error.message)
-  }
 }
 
 //update reindeer to player
@@ -155,7 +184,7 @@ export async function getLetterCount(playerId){
   try {
     const response = await fetch(`http://127.0.0.1:5000/get_letter_count?player_id=${playerId}`)
     const responseJson = await response.json()
-    return responseJson  //print out and check how the json -> point to the goal data
+    return responseJson
   }
   catch(error){
     console.log(error.message)
@@ -405,6 +434,7 @@ export async function appearQuestion(airportId, questionId){
   const right_answer = questionData.right_answer;
   const win_message = questionData.win_message;
   const lose_message = questionData.lose_message;
+  const letter_change = questionData.letter_change
   const questionField = document.querySelector('.quiz_paragraph')
   questionField.innerHTML = question_content
   const flexDiv = document.querySelector('.flex')
@@ -463,11 +493,19 @@ export async function appearQuestion(airportId, questionId){
     } else {
       isCorrect = false
     }
+    const playerId = sessionStorage.getItem('player_id');
+    const letter_count_data = getLetterCount(playerId)
+    let letter_count = letter_count_data.letter_count
     if (isCorrect) {
+      letter_count += letter_change
       questionField.innerHTML = win_message
+      questionField.innerHTML += ' You got ' + letter_change + ' more letters.'
     } else {
+      letter_count -= letter_change
       questionField.innerHTML = lose_message
+      questionField.innerHTML += ' You lost ' + letter_change + ' letters.'
     }
+    updateLetterCount(playerId,letter_count)
     input.remove();
     submit.remove();
     afterQuestion(airportId);
@@ -536,12 +574,14 @@ export async function airportClick(){
     const div = event.currentTarget; // Get the div that was clicked
     console.log("Airport clicked:", div.id);
     const airportId = div.id;
+    updateAirportDone(airportId)
     getAirportData(airportId).then(async (airportData) => {
       const countryGroup = airportData.country_group;
       const questions = await fetchQuestionsByGroup(countryGroup);
       const randomQuestion = questions[Math.floor(
           Math.random() * questions.length)];
       const questionId = randomQuestion.question_id;
+
       displayCharacterAndQuizBox('snowman', 'img/snowman.png', 'SNOWMAN:');
       await appearGreeting(airportId, questionId);
     });

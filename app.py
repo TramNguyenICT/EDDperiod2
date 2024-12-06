@@ -26,11 +26,11 @@ CORS(app)
 /reset_airport
 /reset_grinch
 /insert_player
-/get_player_id
 /update_reindeer_to_player
 /update_airport
 /update_airport_done
 /get_airport_data
+/get_remain_airports
 /get_letter_count
 /update_letter_count
 /get_letter_change_grinch
@@ -47,7 +47,7 @@ def reset_airport():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        sql1 = f"UPDATE airport SET is_finished = 0"
+        sql1 = "UPDATE airport SET is_finished = 0"
         cursor.execute(sql1)
         connection.commit()
         cursor.close()
@@ -79,43 +79,30 @@ def reset_grinch():
 def insert_player():
     try:
         data = request.json
-        player_id = data['player_id']
+        player_name = data['player_name']
         connection = get_db_connection()
         cursor = connection.cursor()
-        sql3 = f"INSERT INTO player(player_na) VALUES ('{player_name}')"
+        sql3 = f"INSERT INTO player(player_name) VALUES ('{player_name}')"
         cursor.execute(sql3)
+        player_id = cursor.lastrowid
         connection.commit()
         cursor.close()
         connection.close()
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success","player_id": player_id})
     except Exception as e:
         app.logger.error(f"Error inserting player: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 
-@app.route('/get_player_id', methods=['GET'])
-def get_player_id():
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-
-    sql_get_player_id = f"SELECT LAST_INSERT_ID()"
-    cursor.execute(sql_get_player_id)
-    player_id = cursor.fetchone()[0]
-
-    cursor.close()
-    connection.close()
-
-    return jsonify({"player_id": player_id})
-
 @app.route('/update_reindeer_to_player',methods=['POST'])
 def update_reindeer_to_player():
     try:
         data = request.json
-        player_name = data['player_name']
+        player_id = data['player_id']
         reindeer_id = data['reindeer_id']
         connection = get_db_connection()
         cursor = connection.cursor()
-        sql3b = f"UPDATE airport SET reindeer_id = '{reindeer_id}' WHERE player_id = '{player_id}'"
+        sql3b = f"UPDATE player SET reindeer_id = '{reindeer_id}' WHERE player_id = '{player_id}'"
         cursor.execute(sql3b)
         connection.commit()
         cursor.close()
@@ -126,7 +113,7 @@ def update_reindeer_to_player():
         return jsonify({"error": "Internal server error"}), 500
 
 #update current airport
-@app.route('/update_airport>',methods=['POST'])
+@app.route('/update_airport',methods=['POST'])
 def update_airport():
     try:
         data = request.json
@@ -144,10 +131,12 @@ def update_airport():
         app.logger.error(f"Error updating airport: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-@app.route('/update_airport_done>',methods=['POST'])
+@app.route('/update_airport_done',methods=['POST'])
 def update_airport_done():
     try:
+        print("Request received at /update_airport_done")
         data = request.json
+        print("Request data:", data)
         current_airport = data['current_airport']
         connection = get_db_connection()
         cursor = connection.cursor()
@@ -156,7 +145,7 @@ def update_airport_done():
         connection.commit()
         cursor.close()
         connection.close()
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success", "message": "Airport updated!"})
     except Exception as e:
         app.logger.error(f"Error updating airport done: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -198,6 +187,30 @@ def get_airport_data():
         cursor.close()
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        app.logger.error(f"Error retrieving question: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/get_remain_airports',methods=['GET'])
+def get_remain_airports():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql_to_get_remain_airports = """
+            SELECT airport_id
+            FROM airport
+            WHERE is_finished = '0'
+        """
+        cursor.execute(sql_to_get_remain_airports)
+        remain_airports = cursor.fetchall()
+
+        # Check if the data is found
+        if not remain_airports:
+            return jsonify({"error": "Airport not found"}), 404
+
+        cursor.close()
+        connection.close()
+        return jsonify(remain_airports)
     except Exception as e:
         app.logger.error(f"Error retrieving question: {e}")
         return jsonify({"error": "Internal server error"}), 500
