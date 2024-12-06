@@ -11,13 +11,6 @@ import {
 
 
 /*
-// Initialize Game
-async function initializeGame() {
-  questionDone = 0;
-  await updateAirportDone(1001); // Set Helsinki's is_finished to 1
-  setupMap(); // Set up initial map
-}
-
 // Start Game
 initializeGame();
   */
