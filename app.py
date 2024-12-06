@@ -26,6 +26,8 @@ CORS(app)
 /reset_airport
 /reset_grinch
 /insert_player
+/get_player_id
+/update_reindeer_to_player
 /update_airport --> change to get_airport_data
 /update_airport_done
 /airport_greeting
@@ -80,12 +82,44 @@ def reset_grinch():
 def insert_player():
     try:
         data = request.json
+        player_id = data['player_id']
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql3 = f"INSERT INTO player(player_na) VALUES ('{player_name}')"
+        cursor.execute(sql3)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        app.logger.error(f"Error inserting player: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route('/get_player_id', methods=['GET'])
+def get_player_id():
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    sql_get_player_id = f"SELECT LAST_INSERT_ID()"
+    cursor.execute(sql_get_player_id)
+    player_id = cursor.fetchone()[0]
+
+    cursor.close()
+    connection.close()
+
+    return jsonify({"player_id": player_id})
+
+@app.route('/update_reindeer_to_player',methods=['POST'])
+def update_reindeer_to_player():
+    try:
+        data = request.json
         player_name = data['player_name']
         reindeer_id = data['reindeer_id']
         connection = get_db_connection()
         cursor = connection.cursor()
-        sql3 = f"INSERT INTO player(player_name, reindeer_id) VALUES ('{player_name}', {reindeer_id})"
-        cursor.execute(sql3)
+        sql3b = f"UPDATE airport SET reindeer_id = '{reindeer_id}' WHERE player_id = '{player_id}'"
+        cursor.execute(sql3b)
         connection.commit()
         cursor.close()
         connection.close()

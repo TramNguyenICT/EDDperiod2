@@ -4,7 +4,7 @@
 //update current airport
 export async function updateAirport(playerId, currentAirport) {
     try {
-      const response = await fetch('/update_airport', {
+      const response = await fetch('http://127.0.0.1:5000/update_airport', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export async function updateAirport(playerId, currentAirport) {
 
 export async function updateAirportDone(currentAirport) {
     try {
-      const response = await fetch('/update_airport_done', {
+      const response = await fetch('http://127.0.0.1:5000/update_airport_done', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export async function updateAirportDone(currentAirport) {
 //get airport greeting
 export async function getAirportData(airportId){
   try {
-    const response = await fetch(`http://localhost:5000//get_airport_data?airport_id=${airportId}`)
+    const response = await fetch(`http://127.0.0.1:5000/get_airport_data?airport_id=${airportId}`)
     const responseJson = await response.json()
     return responseJson  //print out and check how the json -> point to the goal data
   }
@@ -64,10 +64,76 @@ export async function getAirportData(airportId){
   }
 }
 
+//insert player
+export async function insertPlayer(playerName,) {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/insert_player', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          player_name: playerName,
+        }),
+      });
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        console.log("Player inserted successfully!");
+      }
+      else{
+       console.log("Error inserting player:", data.message)
+      }
+    }
+    catch(error){
+      console.log("Fetch error:", error.message)
+    }
+}
+
+//get player_id
+export async function getplayerId(){
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/get_player_id`)
+    const responseJson = await response.json()
+    return responseJson  //print out and check how the json -> point to the goal data
+  }
+  catch(error){
+    console.log(error.message)
+  }
+}
+
+//update reindeer to player
+export async function updateReindeerToPlayer(playerId,reindeerId) {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/update_reindeer_to_player', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          player_id: playerId,
+          reindeer_id: reindeerId,
+        }),
+      });
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        console.log("Reindeer updated successfully!");
+      }
+      else{
+       console.log("Error updating reindeer:", data.message)
+      }
+    }
+    catch(error){
+      console.log("Fetch error:", error.message)
+    }
+}
+
+
 //get letter count
 export async function getLetterCount(playerId){
   try {
-    const response = await fetch(`/get_letter_count?player_id=${playerId}`)
+    const response = await fetch(`http://127.0.0.1:5000/get_letter_count?player_id=${playerId}`)
     const responseJson = await response.json()
     return responseJson  //print out and check how the json -> point to the goal data
   }
@@ -79,7 +145,7 @@ export async function getLetterCount(playerId){
 //update letter count
 export async function updateLetterCount(playerId, letterCount) {
     try {
-      const response = await fetch('/update_letter_count', {
+      const response = await fetch('http://127.0.0.1:5000/update_letter_count', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +173,7 @@ export async function updateLetterCount(playerId, letterCount) {
 //get letter of grinch quiz
 export async function getLetterChangeGrinch(grinchChallenge){
   try {
-    const response = await fetch(`/get_letter_change_grinch?grinch_challenge=${grinchChallenge}`)
+    const response = await fetch(`http://127.0.0.1:5000/get_letter_change_grinch?grinch_challenge=${grinchChallenge}`)
     const responseJson = await response.json()
     return responseJson  //print out and check how the json -> point to the goal data
   }
@@ -119,7 +185,7 @@ export async function getLetterChangeGrinch(grinchChallenge){
 //get question data
 export async function getQuestion(questionId){
   try {
-    const response = await fetch(`http://localhost:5000/get_question?question_id=${questionId}`);
+    const response = await fetch(`http://127.0.0.1:5000/get_question?question_id=${questionId}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -135,7 +201,7 @@ export async function getQuestion(questionId){
 //get reindeer id
 export async function getReindeerId(playerId){
   try {
-    const response = await fetch(`/get_reindeer_id?player_id=${playerId}`)
+    const response = await fetch(`http://127.0.0.1:5000/get_reindeer_id?player_id=${playerId}`)
     const responseJson = await response.json()
     return responseJson  //print out and check how the json -> point to the goal data
   }
@@ -147,7 +213,7 @@ export async function getReindeerId(playerId){
 //#update final result to player table
 export async function updateFinalResult(playerId, result) {
     try {
-      const response = await fetch('/update_final_result', {
+      const response = await fetch('http://127.0.0.1:5000/update_final_result', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
