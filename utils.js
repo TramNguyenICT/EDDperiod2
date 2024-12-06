@@ -1,6 +1,26 @@
 'use strict';
+/* List function 06/12/2024
+updateAirport(playerId, currentAirport)
+updateAirportDone(currentAirport)
+getAirportData(airportId)
+export async function insertPlayer(playerName)
+getplayerId()
+updateReindeerToPlayer(playerId,reindeerId)
+getLetterCount(playerId)
+updateLetterCount(playerId, letterCount)
+getLetterChangeGrinch(grinchChallenge)
+getQuestion(questionId)
+getReindeerId(playerId)
+updateFinalResult(playerId, result)
+getWeatherData(airportId)
+fetchQuestionsByGroup(countryGroup)
+createElement(tag, attributes, styles)
+displayCharacterAndQuizBox(characterName, imgSrc, headingText)
+appearQuestion(questionId)
+afterQuestion()
+appearGreeting(airportId, questionId)
+ */
 
-//API request function
 //update current airport
 export async function updateAirport(playerId, currentAirport) {
     try {
@@ -65,7 +85,7 @@ export async function getAirportData(airportId){
 }
 
 //insert player
-export async function insertPlayer(playerName,) {
+export async function insertPlayer(playerName) {
     try {
       const response = await fetch('http://127.0.0.1:5000/insert_player', {
         method: 'POST',
@@ -283,7 +303,7 @@ export function createElement(tag, attributes, styles) {
 export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
   // Main container
   const characterAndQuizBox = createElement('div', {
-    class: "${characterName}_and_quiz_box",
+    class: `${characterName}_and_quiz_box`,
   }, {
     position: 'absolute',
     bottom: '1rem',
@@ -309,7 +329,7 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
     marginLeft: '-10%',
     marginBottom: '2rem',
   });
-  snowmanAndQuizBox.appendChild(characterDiv);
+  characterAndQuizBox.appendChild(characterDiv);
 
   // Snowman image
   const characterImg = createElement('img', {
@@ -321,7 +341,7 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
     height: 'auto',
     backgroundColor: 'transparent',
   });
-  snowmanDiv.appendChild(characterImg);
+  characterDiv.appendChild(characterImg);
 
   // Quiz box
   const quizDivision = createElement('div', {
@@ -341,13 +361,13 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
     flexDirection: 'column',
     justifyContent: 'center',
   });
-  snowmanAndQuizBox.appendChild(quizDivision);
+  characterAndQuizBox.appendChild(quizDivision);
 
-  // Snowman heading
+  // Character heading
   const characterHeading = createElement('h2', {
     class: '${characterName}-heading'
   });
-  characterHeading.innerText = 'headingText:';
+  characterHeading.innerText = headingText;
   quizDivision.appendChild(characterHeading);
 
   // Quiz paragraph
@@ -378,7 +398,7 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
 //displayCharacterAndQuizBox('reindeer', 'img/reindeer.png', 'REINDEER:');
 //displayCharacterAndQuizBox('grinch', 'img/grinch1.png', 'GRINCH:');
 
-export async function appearQuestion(questionId){
+export async function appearQuestion(airportId, questionId){
   const questionData =await getQuestion(questionId)
   console.log(questionData)
   const question_content = questionData.question_content;
@@ -450,12 +470,11 @@ export async function appearQuestion(questionId){
     }
     input.remove();
     submit.remove();
-    afterQuestion();
-    questionDone++
+    afterQuestion(airportId);
   });
 }
 
-export async function afterQuestion(){
+export async function afterQuestion(airportId){
     const nextButton = createElement('button', {
       type: 'button',
       class: 'next',
@@ -475,8 +494,9 @@ export async function afterQuestion(){
     const next = document.querySelector('.next')
     nextButton.addEventListener('click',async function(evt) {
       nextButton.remove()
-      const snowman_and_quiz_box = document.querySelector('.snowman_and_quiz_box')
-      snowman_and_quiz_box.remove()
+      const characterAndQuizBox = document.querySelector('.snowman_and_quiz_box')
+      characterAndQuizBox.remove()
+      changeAirportIconToElfIcon(airportId)
     });
 }
 
@@ -508,8 +528,38 @@ export async function appearGreeting(airportId, questionId){
     nextButton.addEventListener('click',async function(evt) {
       greetingField.innerText = ''
       nextButton.remove()
-      appearQuestion(questionId);
+      appearQuestion(airportId, questionId);
     });
 }
+
+export async function airportClick(){
+    const div = event.currentTarget; // Get the div that was clicked
+    console.log("Airport clicked:", div.id);
+    const airportId = div.id;
+    getAirportData(airportId).then(async (airportData) => {
+      const countryGroup = airportData.country_group;
+      const questions = await fetchQuestionsByGroup(countryGroup);
+      const randomQuestion = questions[Math.floor(
+          Math.random() * questions.length)];
+      const questionId = randomQuestion.question_id;
+      displayCharacterAndQuizBox('snowman', 'img/snowman.png', 'SNOWMAN:');
+      await appearGreeting(airportId, questionId);
+    });
+}
+
+export function changeAirportIconToElfIcon(airportId){
+  const airportDiv = document.getElementById(airportId);
+  const airportIcon = airportDiv.querySelector('.airport-icon');
+  const airportToolTip = airportDiv.querySelector('.tooltip');
+  airportIcon.src = "img/elficon.png"
+  airportIcon.alt= "elf was here"
+  airportToolTip.innerHTML += '<br>You were here already!'
+  airportDiv.removeEventListener('click', airportClick);
+  airportIcon.addEventListener('click', function(evt){
+    evt.stopPropagation()
+  })
+}
+
+
 
 

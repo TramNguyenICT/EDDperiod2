@@ -1,3 +1,14 @@
+
+import {
+  appearGreeting,
+  displayCharacterAndQuizBox,
+  fetchQuestionsByGroup,
+  getAirportData,
+  airportClick,
+} from '../utils.js';
+
+let questionDone = 0
+
 /*
 // Initialize Game
 async function initializeGame() {
@@ -10,14 +21,6 @@ async function initializeGame() {
 initializeGame();
   */
 // initialization + set is_finished of Helsinki to 1
-import {
-  appearGreeting,
-  displayCharacterAndQuizBox,
-  fetchQuestionsByGroup,
-  getAirportData,
-} from '../utils.js';
-
-let questionDone = 0
 //updateAirportDone(1001)
 
 //while (questionDone <7){
@@ -27,18 +30,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const airportDivs = document.querySelectorAll(".airport");
   console.log(airportDivs)
   airportDivs.forEach((div) => {
-    div.addEventListener('click', async function() {
-      console.log("Airport clicked:", div.id);
-      const airportId = div.id
-      const airportData = await getAirportData(airportId)
-      const countryGroup = airportData.country_group
-      const questions = await fetchQuestionsByGroup(countryGroup);
-      const randomQuestion = questions[Math.floor(
-          Math.random() * questions.length)];
-      const questionId = randomQuestion.question_id;
-      displayCharacterAndQuizBox('snowman', 'img/snowman.png', 'SNOWMAN:');
-      await appearGreeting(airportId, questionId)
-    });
+    div.addEventListener('click', airportClick)
+    questionDone++
   });
 })
 

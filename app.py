@@ -22,16 +22,15 @@ def get_db_connection():
 app = Flask(__name__)
 CORS(app)
 
-'''list of route
+'''list of route 06/12/2024
 /reset_airport
 /reset_grinch
 /insert_player
 /get_player_id
 /update_reindeer_to_player
-/update_airport --> change to get_airport_data
+/update_airport
 /update_airport_done
-/airport_greeting
-/get_airport_reindeer_id --> change to get_airport_data
+/get_airport_data
 /get_letter_count
 /update_letter_count
 /get_letter_change_grinch
@@ -39,9 +38,7 @@ CORS(app)
 /get_reindeer_id
 /update_final_result
 /get_weather_data
-/get_city_id --> change to get_airport_data
-/get_airport_country_group --> change to get_airport_data
-/get_question_bank_country_group --> merge to get_question
+/get_question_bank_country_group
 '''
 
 # reset all airport to FALSE
@@ -127,8 +124,6 @@ def update_reindeer_to_player():
     except Exception as e:
         app.logger.error(f"Error inserting player: {e}")
         return jsonify({"error": "Internal server error"}), 500
-
-
 
 #update current airport
 @app.route('/update_airport>',methods=['POST'])
