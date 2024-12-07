@@ -135,22 +135,38 @@ export async function insertPlayer(playerName) {
         }),
       });
       const data = await response.json();
-
-      if (data.status === 'success') {
-        const playerId = data.player_id;
-        console.log("Player inserted successfully!");
-        sessionStorage.setItem('player_id', playerId);
-        return playerId;
-      }
-      else{
-       console.log("Error inserting player:", data.message)
-      }
+      console.log(data)
+      const playerId = data.player_id;
+      console.log("Player inserted successfully!");
+      sessionStorage.setItem('player_id', playerId);
+      console.log(sessionStorage.getItem('player_id'))
     }
     catch(error){
       console.log("Fetch error:", error.message)
     }
 }
 
+
+export async function getPlayerId(){
+  try {
+    const response = await fetch('http://127.0.0.1:5000/get_player_id', {
+      method: 'GET',
+    });
+
+    const data = await response.json();
+
+    if (data.player_id) {
+      console.log("Player ID received:", data.player_id);
+      const playerId = data.player_id
+      console.log("Player_id got successfully!");
+      return playerId
+    } else {
+      console.log("Player id not found.");
+    }
+  } catch (error) {
+    console.log("Error getting player id:", error.message);
+  }
+}
 //update reindeer to player
 export async function updateReindeerToPlayer(playerId,reindeerId) {
     try {
@@ -484,7 +500,7 @@ export async function appearQuestion(airportId, questionId){
   let isCorrect;
   const input = document.querySelector('.query')
   const submit = document.querySelector('.submit')
-  submit.addEventListener('click',function handleSubmit() {
+  submit.addEventListener('click',async function handleSubmit() {
     const answer = input.value.trim().toLowerCase();
     console.log(answer)
     let isCorrect;
@@ -493,9 +509,11 @@ export async function appearQuestion(airportId, questionId){
     } else {
       isCorrect = false
     }
-    const playerId = sessionStorage.getItem('player_id');
-    const letter_count_data = getLetterCount(playerId)
+    const playerId = await getPlayerId('player_id');
+    const letter_count_data = await getLetterCount(playerId)
+    console.log("letter_count_data:",letter_count_data)
     let letter_count = letter_count_data.letter_count
+    console.log("letter count before",letter_count)
     if (isCorrect) {
       letter_count += letter_change
       questionField.innerHTML = win_message
@@ -505,7 +523,10 @@ export async function appearQuestion(airportId, questionId){
       questionField.innerHTML = lose_message
       questionField.innerHTML += ' You lost ' + letter_change + ' letters.'
     }
+    console.log("letter count after",letter_count)
     updateLetterCount(playerId,letter_count)
+    const letterParagraph = document.getElementById('letter')
+    letterParagraph.innerText = letter_count
     input.remove();
     submit.remove();
     afterQuestion(airportId);

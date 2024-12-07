@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
   buttonDivs.forEach((div) => {
     div.addEventListener('click', async function(evt){
     if (questionDone >= 3){
-      window.location.href = "../Tutorial page/tutorial-page.html";
+      window.location.href = "../Win_message_page/win.html";
     }
     const remainedAirports = await getRemainedAirport()
     console.log(remainedAirports)

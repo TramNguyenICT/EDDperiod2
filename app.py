@@ -26,6 +26,7 @@ CORS(app)
 /reset_airport
 /reset_grinch
 /insert_player
+/get_player_id
 /update_reindeer_to_player
 /update_airport
 /update_airport_done
@@ -93,6 +94,27 @@ def insert_player():
         app.logger.error(f"Error inserting player: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+
+@app.route('/get_player_id', methods=['GET'])
+def get_player_id():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        sql_get_player_id = f"SELECT player_id FROM player ORDER BY player_id DESC LIMIT 1"
+        cursor.execute(sql_get_player_id)
+        result = cursor.fetchone()
+        if result:
+            player_id = result['player_id']
+            cursor.close()
+            connection.close()
+            return jsonify({"player_id": player_id})
+        else:
+            return jsonify({"error": "Player not found"}), 404
+
+    except Exception as e:
+        app.logger.error(f"Error getting player ID: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/update_reindeer_to_player',methods=['POST'])
 def update_reindeer_to_player():
