@@ -5,8 +5,6 @@ import {
 
  //window.location.href = "../Main page/main-page.html?reindeer_id=" + reindeerId;
 
-let playerName = 'test'
-insertPlayer(playerName)
 const playerId = sessionStorage.getItem('player_id');
 document.querySelectorAll('.reindeer').forEach(reindeer => {
     reindeer.addEventListener('click', () => {
