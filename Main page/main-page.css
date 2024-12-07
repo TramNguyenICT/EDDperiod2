@@ -26,6 +26,11 @@ body {
     cursor: pointer;
 }
 
+.final_airport {
+    position: absolute;
+    cursor: pointer;
+}
+
 .airport-icon {
     width: auto;
     height: auto;
@@ -57,7 +62,28 @@ body {
     z-index: 10;
 }
 
+.final_airport .tooltip {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background: antiquewhite;
+    color: #225400;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0; /* Initially hidden */
+    pointer-events: none; /* Prevent interference with hover */
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
 .airport:hover .tooltip {
+    opacity: 1; /* Show tooltip on hover */
+}
+
+.final_airport:hover .tooltip {
     opacity: 1; /* Show tooltip on hover */
 }
 
