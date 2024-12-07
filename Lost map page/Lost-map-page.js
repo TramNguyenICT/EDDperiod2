@@ -2,8 +2,10 @@ import {
   airportClick, appearGreeting, displayCharacterAndQuizBox,
   fetchQuestionsByGroup,
   getAirportData,
-  updateAirportDone, getRemainedAirport
+  updateAirportDone, getRemainedAirport,
+  getLetterCount, updateFinalResult
 } from '../utils.js';
+import {getPlayerId} from '../utils.js';
 
 let questionDone = 0
 document.addEventListener("DOMContentLoaded", function() {
@@ -12,7 +14,23 @@ document.addEventListener("DOMContentLoaded", function() {
   buttonDivs.forEach((div) => {
     div.addEventListener('click', async function(evt){
     if (questionDone >= 3){
-      window.location.href = "../Win_message_page/win.html";
+      const playerId = await getPlayerId('player_id')
+      const letter_count_data = await getLetterCount(playerId)
+      console.log("letter_count_data:", letter_count_data)
+      let letter_count = letter_count_data.letter_count
+      if (letter_count >= 100){
+        let result = "win"
+      }
+      else{
+        let result = "lose"
+      }
+      updateFinalResult(playerId,randomIndex)
+      if (result === "win") {
+        window.location.href = "../Win_message_page/win.html";
+      }
+      else{
+        window.location.href = "../Lose_message_page/lose.html";
+      }
     }
     const remainedAirports = await getRemainedAirport()
     console.log(remainedAirports)

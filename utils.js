@@ -503,20 +503,24 @@ export async function appearQuestion(airportId, questionId,grinch) {
   submit.addEventListener('click', async function handleSubmit() {
     const playerId = await getPlayerId('player_id');
     const reindeerId = await getReindeerId(playerId)
+    console.log("reindeerId"+reindeerId)
     let isProtected = false
-    if (reindeerId === 2003) {
+
+    if (reindeerId == 2003) {
       const protectionStatus = await getCupidProtected();
-      if (protectionStatus === 0){
-        isProtected = True
+      console.log(protectionStatus)
+      if (protectionStatus[0] === "0"){
+        isProtected = true
       }
       else {
-        isProtected = False
+        isProtected = false
       }
     }
+    console.log("reindeerId:", reindeerId, "isProtected:", isProtected);
     const answer = input.value.trim().toLowerCase();
     console.log(answer)
     let isCorrect;
-    if (answer === right_answer || right_answer ==="autowin") {
+    if (answer === right_answer || right_answer==="autowin") {
       isCorrect = true
     } else {
       isCorrect = false
@@ -526,47 +530,49 @@ export async function appearQuestion(airportId, questionId,grinch) {
     console.log("letter_count_data:", letter_count_data)
     let letter_count = letter_count_data.letter_count
     console.log("letter count before", letter_count)
+
     if (isCorrect) {
-      let letterReindeer = 0;
-      let totalLetterChange = letter_change;
-      if (reindeerId === 2001) {
-        letterReindeer = Math.round(letter_change * 0.1)
-        totalLetterChange = letter_change + letterReindeer
+      if (reindeerId == 2001) {
+        console.log("isCorrect + 2001");
+        let letterReindeer = Math.round(letter_change * 0.1);
+        let totalLetterChange = letter_change + letterReindeer;
+        letter_count += totalLetterChange;
+        questionField.innerHTML = `${win_message} You got ${letter_change} more letters and ${letterReindeer} letters with the help of Rudolph.`;
       }
-      letter_count += totalLetterChange
-      if (letterReindeer > 0) {
-        questionField.innerHTML = win_message + " You got " + letter_change + " more letters and " + letterReindeer + " more letters with the help of Rudolph.";
-      } else {
-        questionField.innerHTML = win_message + " You got " + letter_change + " more letters.";
-      }
-    } else {
-      let letterReindeer = 0;
-      let totalLetterChange = letter_change;
-      if (reindeerId === 2002) {
-        let letterReindeer = Math.round(letter_change * 0.1)
-        let totalLetterChange = letter_change - letterReindeer
-      } else if (reindeerId === 2003 && isProtected) {
-        questionField.innerHTML = `${lose_message} You were protected by Cupid and didn't lose any letters this time!`;
-        return;
-      }
-      letter_count -= totalLetterChange
-      if (letterReindeer > 0) {
-        questionField.innerHTML = lose_message + " You lost " + letter_change +
-            " more letters, but Vixen saves you " +
-            letterReindeer + " letters.";
-      } else {
-        questionField.innerHTML = lose_message + " You lost " + letter_change +
-            " more letters.";
+      else {
+        console.log("isCorrect + not 2001");
+        letter_count += letter_change;
+        questionField.innerHTML = `${win_message} You got ${letter_change} more letters.`;
       }
     }
-    console.log("letter count after", letter_count)
-    updateLetterCount(playerId, letter_count)
-    const letterParagraph = document.getElementById('letter')
-    letterParagraph.innerText = letter_count
-    input.remove();
-    submit.remove();
-    afterQuestion(airportId, grinch);
-  });
+    else {
+      console.log("reindeerId:", reindeerId, "isProtected:", isProtected);
+      if (reindeerId == 2002) {
+        console.log("notCorrect + 2002");
+        let letterReindeer = Math.round(letter_change * 0.1);
+        let totalLetterChange = letter_change - letterReindeer;
+        letter_count -= totalLetterChange;
+        questionField.innerHTML = `${win_message} You lost ${letter_change} letters, but Vixen saves you ${letterReindeer} letters.`;
+      }
+      else if (reindeerId == 2003 && isProtected) {
+        console.log("notCorrect + 2003");
+        questionField.innerHTML = `${lose_message} You were protected by Cupid and didn't lose any letters this time!`;
+        updateCupidProtected()
+      }
+      else {
+        console.log("notCorrect + not 2002 + not 2003");
+        letter_count -= letter_change;
+        questionField.innerHTML = `${lose_message} You lost ${letter_change} letters.`;
+    }
+  }
+  console.log("letter count after", letter_count)
+  updateLetterCount(playerId, letter_count)
+  const letterParagraph = document.getElementById('letter')
+  letterParagraph.innerText = letter_count
+  input.remove();
+  submit.remove();
+  afterQuestion(airportId, grinch);
+  })
 }
 
 export async function afterQuestion(airportId,grinch){
