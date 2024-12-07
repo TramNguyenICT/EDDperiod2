@@ -654,6 +654,7 @@ export async function appearGrinchQuestion() {
 
     displayCharacterAndQuizBox('grinch', 'img/grinch1.png', 'GRINCH:');
     const questionField = document.querySelector('.quiz_paragraph');
+    questionField.innerHTML = "Hahaha, Grinch is here. I have a challenge for you, little elf."
     questionField.innerHTML = question_content;
 
     const flexDiv = document.querySelector('.flex');
