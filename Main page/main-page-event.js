@@ -37,8 +37,6 @@ async function updateData() {
 updateData();
 
 //while (questionDone <7){
-
-
 document.addEventListener("DOMContentLoaded", function() {
   const airportDivs = document.querySelectorAll(".airport");
   console.log(airportDivs)

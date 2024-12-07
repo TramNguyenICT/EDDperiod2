@@ -183,7 +183,7 @@ def get_airport_data():
         cursor = connection.cursor()
         sql = """
             SELECT airport_name, city_id, country, country_group,
-                   greeting, challenge, letter_change, is_finished, grinch_id
+                   greeting, challenge, letter_change, is_finished, grinch
             FROM airport
             WHERE airport_id = %s
         """
@@ -204,7 +204,7 @@ def get_airport_data():
             "challenge": airport_data[5],
             "letter_change": airport_data[6],
             "is_finished": airport_data[7],
-            "grinch_id": airport_data[8]
+            "grinch": airport_data[8]
         }
         cursor.close()
         connection.close()
@@ -352,6 +352,37 @@ def get_reindeer_id():
         app.logger.error(f"Error fetching reindeer id: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+
+@app.route('/get_cupid_protect', methods=['GET'])
+def get_cupid_protect():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql_get_cupid = f"SELECT is_protected FROM reindeer WHERE reindeer_id = '2003'"
+        cursor.execute(sql_get_cupid)
+        is_protected = cursor.fetchone()
+        cursor.close()
+        connection.close()
+        return jsonify(is_protected or {})
+    except Exception as e:
+        app.logger.error(f"Error fetching is_protected: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/update_cupid_protect',methods=['POST'])
+def update_cupid_protect():
+    try:
+        print("Request received at /update_cupid_protect")
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql_update_cupid = f"UPDATE reindeer SET is_protected = '1' WHERE reindeer_id = '2003'"
+        cursor.execute(sql_update_cupid)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({"status": "success", "message": "Player already used Cupid protected"})
+    except Exception as e:
+        app.logger.error(f"Error updating Cupid protected: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 #update final result to player table
 @app.route('/update_final_result', methods=['POST'])
 def update_final_result():
@@ -433,22 +464,49 @@ def get_question_bank_country_group():
         app.logger.error(f"Error fetching country_group from question_bank table: {e}")
         return jsonify({"status": "error", "message": "Could not fetch country_group"}), 500
 
-
-if __name__ == '__main__':
-    app.run(use_reloader=True, host='127.0.0.1',port=5000)
-
+def initialize_grinch_challenges():
     connection = get_db_connection()
     cursor = connection.cursor()
-    for i in range(6):
-        while True:
-            grinch_airport = random.randint(1002, 1059)
-            sql4a = f"SELECT grinch_id from airport WHERE airport_id = {grinch_airport}"
-            cursor.execute(sql4a)
-            grinch_id = cursor.fetchone()
-            if grinch_id is None:
-                sql4b = f"UPDATE airport SET grinch_id = {i} WHERE airport_id = {grinch_airport}"
-                cursor.execute(sql4b)
-                connection.commit()
-                break
+
+    # Reset all Grinch challenges in the database
+    sql_reset_grinch = "UPDATE airport SET grinch = 0"
+    cursor.execute(sql_reset_grinch)
+    connection.commit()
+
+    # Assign Grinch challenges to 6 random airports
+    assigned_airports = 0
+    while assigned_airports < 6:
+        grinch_airport = random.randint(1002, 1039)  # Adjust range if needed
+        sql_check_grinch = f"SELECT grinch FROM airport WHERE airport_id = {grinch_airport}"
+        cursor.execute(sql_check_grinch)
+        grinch = cursor.fetchone()
+
+        # If the airport doesn't already have a Grinch challenge, assign one
+        if grinch ==0 or grinch[0]==0:
+            sql_assign_grinch = f"UPDATE airport SET grinch = 1 WHERE airport_id = {grinch_airport}"  # Replace 1 with the actual Grinch challenge ID if needed
+            cursor.execute(sql_assign_grinch)
+            connection.commit()
+            assigned_airports += 1
+            print(f"Added Grinch challenge to airport {grinch_airport}")
     cursor.close()
     connection.close()
+
+def reset_airport_py():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    sql_reset_airport = "UPDATE airport SET is_finished = 0"
+    cursor.execute(sql_reset_airport)
+    connection.commit()
+
+def reset_cupid_protect():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    sql_reset_cupid = "UPDATE reindeer SET is_protected = 0 WHERE reindeer_id = 2003"
+    cursor.execute(sql_reset_cupid)
+    connection.commit()
+
+if __name__ == '__main__':
+    reset_cupid_protect()
+    reset_airport_py()
+    initialize_grinch_challenges()
+    app.run(use_reloader=True, host='127.0.0.1',port=5000)
