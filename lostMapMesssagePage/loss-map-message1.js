@@ -23,6 +23,7 @@ function goToLostMapMainPage() {
       window.location.href = "../Lost map page/Lost-map-page.html";
     }
 
+
 window.addEventListener('beforeunload', () => {
     SoundManager.saveMusicCurrentTime();
 });
