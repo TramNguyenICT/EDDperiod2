@@ -146,7 +146,7 @@ export async function insertPlayer(playerName) {
     }
 }
 
-
+//get player id
 export async function getPlayerId(){
   try {
     const response = await fetch('http://127.0.0.1:5000/get_player_id', {
@@ -268,7 +268,7 @@ export async function getReindeerId(playerId){
   try {
     const response = await fetch(`http://127.0.0.1:5000/get_reindeer_id?player_id=${playerId}`)
     const responseJson = await response.json()
-    return responseJson  //print out and check how the json -> point to the goal data
+    return responseJson
   }
   catch(error){
     console.log(error.message)
@@ -812,5 +812,3 @@ export async function updateCupidProtected(){
         console.error("Error resetting airport:", error.message);
     }
 }
-
-

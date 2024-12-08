@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elf Delivery Dash</title>
     <link rel="stylesheet" href="tutorial-page.css">
-    <link rel="icon" type="image/x-icon" href="../img/letters%20image.png">
+    <script type="module" src="tutorial-page.js"></script>
+    <script type="module" src="../sound-manager.js"></script>
 </head>
 <body>
   <div>
     <img src="Tutorial pics/Tutorial fix image.png" height="1080" width="1920" alt="Background" class="background"/>
     <div class="next-button-container">
-      <img src="Tutorial pics/Next button.png" height="384" width="1278" alt="Next button" class="next-button" onclick="goToPickReindeerPage()"/>
+      <img src="Tutorial pics/Next button.png" height="384" width="1278" alt="Next button" class="next-button"/>
     </div>
+    <button id="music-button">
+      <img id="speaker-icon" src="../img/music-button-on.png" alt="Music On Off Button"/>
+    </button>
   </div>
-  <script>
-    function goToPickReindeerPage() {
-      window.location.href = "../Player name page/player-name-page.html";
-    }
-  </script>
 </body>
 </html>

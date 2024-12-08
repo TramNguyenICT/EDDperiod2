@@ -6,10 +6,12 @@
     <title>Elf Delivery Dash</title>
     <link rel="stylesheet" href="main-page.css">
     <link rel="icon" type="image/x-icon" href="../img/letters%20image.png">
+    <script type="module" src="main-page.js"></script>
+    <script type="module" src="main-page-event.js"></script>
+    <script type="module" src="../sound-manager.js"></script>
 </head>
 <body>
   <div class="map-container">
-        <!-- Main map image -->
 
       <img src="./Main%20page%20pics/Map%20image.png" alt="Nordic Map" class="map-image">
       <div id="airport-container">
@@ -18,13 +20,17 @@
               <div class="tooltip">Rovaniemi</div>
           </div>
       </div>
-      <div id="letter-box" style="top: 3%; left:85%">
-            <p id="letter">100</p>
-             <img id="icon" src="../img/letters%20image.png" alt="Icon">
+      <div id="letter-box" style="top: 4%; left:90%">
+          <p id="letter">100</p>
+          <img id="icon" src="../Main%20page/img/lettericon.png" alt="Icon">
       </div>
+      <div id="reindeer-box" style="top:40%; left:5%">
+          <img id="reindeer-image" src="" alt="Chosen Reindeer" style="display: none; width: 200px; height: auto;">
+      </div>
+      <button id="music-button">
+        <img id="speaker-icon" src="../img/music-button-on.png" alt="Music On Off Button"/>
+      </button>
   </div>
-<script src="main-page.js"></script>
-<script type="module" src="main-page-event.js"></script>
+
 </body>
 </html>
-

@@ -69,3 +69,23 @@ button {
 button:hover {
     background-color: #fc775e;
 }
+
+#music-button {
+    position: fixed;
+    top: 15%;
+    left: 4%;
+    width: 5rem;
+    height: auto;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 50%
+}
+
+#music-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
