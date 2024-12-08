@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const airports = [
         { name: "Keflavík International Airport", src: "Main page pics/Iceland/iceland1.png", top: "15.62%", left: "26.77%", id: "1024" },
-        { name: "Vestmannaeyjar Airport", src: "Main page pics/Iceland/iceland2.png", top: "12.47%", left: "31.69%", id: "1036" },
+        { name: "Vestmannaeyjar Airport", src: "Main page pics/Iceland/iceland2.png", top: "12.47%", left: "31.69%", id: "1035" },
         { name: "Hornafjörður Airport", src: "Main page pics/Iceland/iceland3.png", top: "10.82%", left: "21.73%", id: "1034" },
         { name: "Egilsstaðir Airport", src: "Main page pics/Iceland/iceland4.png", top: "6.15%", left: "27.48%", id: "1026" },
-        { name: "Vopnafjörður Airport", src: "Main page pics/Iceland/iceland5.png", top: "4.66%", left: "34.14%", id: "1039" },
+        { name: "Vopnafjörður Airport", src: "Main page pics/Iceland/iceland5.png", top: "4.66%", left: "34.14%", id: "1038" },
         { name: "Akureyri Airport", src: "Main page pics/Iceland/iceland6.png", top: "3.30%", left: "20.20%", id: "1025" },
         { name: "Malmö Airport", src: "Main page pics/Sweden/sweden1.png", top: "81.41%", left: "52.31%", id: "1017" },
         { name: "Gothenburg-Landvetter Airport", src: "Main page pics/Sweden/sweden2.png", top: "73.15%", left: "48.88%", id: "1014" },
@@ -38,9 +38,9 @@ document.addEventListener("DOMContentLoaded", function() {
         { name: "Kuusamo Airport", src: "Main page pics/Finland/finland8.png", top: "20.31%", left: "80.15%", id: "1007" },
         { name: "Kittilä Airport", src: "Main page pics/Finland/finland9.png", top: "19.10%", left: "73.75%", id: "1005" },
         { name: "Ivalo Airport", src: "Main page pics/Finland/finland10.png", top: "7.81%", left: "78.40%", id: "1002" },
-        { name: "Copenhagen Airport", src: "Main page pics/Denmark/denmark1.png", top: "93.13%", left: "46.00%", id: "1037" },
+        { name: "Copenhagen Airport", src: "Main page pics/Denmark/denmark1.png", top: "93.13%", left: "46.00%", id: "1036" },
         { name: "Vojens Airport", src: "Main page pics/Denmark/denmark2.png", top: "92.08%", left: "40.05%", id: "1010" },
-        { name: "Karup Airport", src: "Main page pics/Denmark/denmark3.png", top: "85.50%", left: "40.03%", id: "1038" }
+        { name: "Karup Airport", src: "Main page pics/Denmark/denmark3.png", top: "85.50%", left: "40.03%", id: "1037" }
     ];
 
 
