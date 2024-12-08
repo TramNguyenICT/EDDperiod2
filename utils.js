@@ -552,7 +552,7 @@ export async function appearQuestion(airportId, questionId,grinch) {
         let letterReindeer = Math.round(letter_change * 0.1);
         let totalLetterChange = letter_change - letterReindeer;
         letter_count -= totalLetterChange;
-        questionField.innerHTML = `${win_message} You lost ${letter_change} letters, but Vixen saves you ${letterReindeer} letters.`;
+        questionField.innerHTML = `${lose_message} You lost ${letter_change} letters, but Vixen saves you ${letterReindeer} letters.`;
       }
       else if (reindeerId == 2003 && isProtected) {
         console.log("notCorrect + 2003");
