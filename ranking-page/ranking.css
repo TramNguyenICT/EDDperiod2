@@ -1,0 +1,78 @@
+ @font-face {
+      font-family: GeistMono;
+      src: url(GeistMono-VariableFont_wght.ttf) format("truetype");
+    }
+
+body {
+    font-family: GeistMono,sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.container {
+    width: 50%;
+    height: 80%;
+    max-width: 900px;
+    background: #c9e7f6;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: rgba(17, 33, 74, 0.71);
+    font-size: 30px;
+    text-align: center;
+
+
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.ranking-table th, .ranking-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+
+}
+
+.ranking-table th {
+    background-color: #4680bf;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.ranking-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.ranking-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.ranking-table td {
+    color: #555;
+}
