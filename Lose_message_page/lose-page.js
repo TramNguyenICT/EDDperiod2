@@ -21,14 +21,20 @@ document.addEventListener("DOMContentLoaded", function() {
             speakerIcon.src = '../img/music-button-on.png';
             sessionStorage.setItem('backgroundMusicPlaying', 'true');
         }
-        goToStartPage();
 
     });
 
   window.addEventListener('beforeunload', () => {
     SoundManager.saveMusicCurrentTime();
   });
+
+  const exitButton = document.querySelector('#exit-button');
+
+  exitButton.addEventListener('click', () => {
+    goToStartPage()
+  });
+
   function goToStartPage(){
-        window.location.href = "../Start page/start-page.html";
-    }
-})
+    window.location.href = "../Start page/start-page.html";
+  }
+});
