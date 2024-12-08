@@ -12,17 +12,17 @@ import SoundManager from '../sound-manager.js';
 let questionDone = 0
 document.addEventListener("DOMContentLoaded", function() {
 
-  const lostPageMusicSource = '../audio/lost-map-audio.mp3';
+  const lostMapMusicSource = '../audio/lost-map-audio.mp3';
 
     if (sessionStorage.getItem('backgroundMusicPlaying') === 'true') {
-        SoundManager.playBackgroundMusic(lostPageMusicSource);
+        SoundManager.playBackgroundMusic(lostMapMusicSource);
     }
 
     const musicButton = document.querySelector('#music-button');
     const speakerIcon = document.querySelector('#speaker-icon');
 
     musicButton.addEventListener('click', () => {
-        SoundManager.turnOnOffBackgroundMusic(lostPageMusicSource);
+        SoundManager.turnOnOffBackgroundMusic(lostMapMusicSource);
 
         if (SoundManager.backgroundMusic.paused) {
             speakerIcon.src = '../img/music-button-off.png';
