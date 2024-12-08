@@ -135,22 +135,38 @@ export async function insertPlayer(playerName) {
         }),
       });
       const data = await response.json();
-
-      if (data.status === 'success') {
-        const playerId = data.player_id;
-        console.log("Player inserted successfully!");
-        sessionStorage.setItem('player_id', playerId);
-        return playerId;
-      }
-      else{
-       console.log("Error inserting player:", data.message)
-      }
+      console.log(data)
+      const playerId = data.player_id;
+      console.log("Player inserted successfully!");
+      sessionStorage.setItem('player_id', playerId);
+      console.log(sessionStorage.getItem('player_id'))
     }
     catch(error){
       console.log("Fetch error:", error.message)
     }
 }
 
+
+export async function getPlayerId(){
+  try {
+    const response = await fetch('http://127.0.0.1:5000/get_player_id', {
+      method: 'GET',
+    });
+
+    const data = await response.json();
+
+    if (data.player_id) {
+      console.log("Player ID received:", data.player_id);
+      const playerId = data.player_id
+      console.log("Player_id got successfully!");
+      return playerId
+    } else {
+      console.log("Player id not found.");
+    }
+  } catch (error) {
+    console.log("Error getting player id:", error.message);
+  }
+}
 //update reindeer to player
 export async function updateReindeerToPlayer(playerId,reindeerId) {
     try {
@@ -332,7 +348,7 @@ export function createElement(tag, attributes, styles) {
 export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
   // Main container
   const characterAndQuizBox = createElement('div', {
-    class: `${characterName}_and_quiz_box`,
+    class: `character_and_quiz_box`,
   }, {
     position: 'absolute',
     bottom: '1rem',
@@ -427,8 +443,8 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
 //displayCharacterAndQuizBox('reindeer', 'img/reindeer.png', 'REINDEER:');
 //displayCharacterAndQuizBox('grinch', 'img/grinch1.png', 'GRINCH:');
 
-export async function appearQuestion(airportId, questionId){
-  const questionData =await getQuestion(questionId)
+export async function appearQuestion(airportId, questionId,grinch) {
+  const questionData = await getQuestion(questionId)
   console.log(questionData)
   const question_content = questionData.question_content;
   const right_answer = questionData.right_answer;
@@ -481,39 +497,90 @@ export async function appearQuestion(airportId, questionId){
     }
   `;
   document.head.appendChild(style);
-  let isCorrect;
+
   const input = document.querySelector('.query')
   const submit = document.querySelector('.submit')
-  submit.addEventListener('click',function handleSubmit() {
+  submit.addEventListener('click', async function handleSubmit() {
+    const playerId = await getPlayerId('player_id');
+    const reindeerId = await getReindeerId(playerId)
+    console.log("reindeerId"+reindeerId)
+    let isProtected = false
+
+    if (reindeerId == 2003) {
+      const protectionStatus = await getCupidProtected();
+      console.log(protectionStatus)
+      if (protectionStatus[0] === "0"){
+        isProtected = true
+      }
+      else {
+        isProtected = false
+      }
+    }
+    console.log("reindeerId:", reindeerId, "isProtected:", isProtected);
     const answer = input.value.trim().toLowerCase();
     console.log(answer)
     let isCorrect;
-    if (answer === right_answer) {
+    if (answer === right_answer || right_answer==="autowin") {
       isCorrect = true
     } else {
       isCorrect = false
     }
-    const playerId = sessionStorage.getItem('player_id');
-    const letter_count_data = getLetterCount(playerId)
+
+    const letter_count_data = await getLetterCount(playerId)
+    console.log("letter_count_data:", letter_count_data)
     let letter_count = letter_count_data.letter_count
+    console.log("letter count before", letter_count)
+
     if (isCorrect) {
-      letter_count += letter_change
-      questionField.innerHTML = win_message
-      questionField.innerHTML += ' You got ' + letter_change + ' more letters.'
-    } else {
-      letter_count -= letter_change
-      questionField.innerHTML = lose_message
-      questionField.innerHTML += ' You lost ' + letter_change + ' letters.'
+      if (reindeerId == 2001) {
+        console.log("isCorrect + 2001");
+        let letterReindeer = Math.round(letter_change * 0.1);
+        let totalLetterChange = letter_change + letterReindeer;
+        letter_count += totalLetterChange;
+        questionField.innerHTML = `${win_message} You got ${letter_change} more letters and ${letterReindeer} letters with the help of Rudolph.`;
+      }
+      else {
+        console.log("isCorrect + not 2001");
+        letter_count += letter_change;
+        questionField.innerHTML = `${win_message} You got ${letter_change} more letters.`;
+      }
     }
-    updateLetterCount(playerId,letter_count)
-    input.remove();
-    submit.remove();
-    afterQuestion(airportId);
-  });
+    else {
+      console.log("reindeerId:", reindeerId, "isProtected:", isProtected);
+      if (reindeerId == 2002) {
+        console.log("notCorrect + 2002");
+        let letterReindeer = Math.round(letter_change * 0.1);
+        let totalLetterChange = letter_change - letterReindeer;
+        letter_count -= totalLetterChange;
+        questionField.innerHTML = `${win_message} You lost ${letter_change} letters, but Vixen saves you ${letterReindeer} letters.`;
+      }
+      else if (reindeerId == 2003 && isProtected) {
+        console.log("notCorrect + 2003");
+        questionField.innerHTML = `${lose_message} You were protected by Cupid and didn't lose any letters this time!`;
+        updateCupidProtected()
+      }
+      else {
+        console.log("notCorrect + not 2002 + not 2003");
+        letter_count -= letter_change;
+        questionField.innerHTML = `${lose_message} You lost ${letter_change} letters.`;
+    }
+  }
+  console.log("letter count after", letter_count)
+  updateLetterCount(playerId, letter_count)
+  const letterParagraph = document.getElementById('letter')
+  letterParagraph.innerText = letter_count
+  input.remove();
+  submit.remove();
+  afterQuestion(airportId, grinch);
+  })
 }
 
-export async function afterQuestion(airportId){
-    const nextButton = createElement('button', {
+export async function afterQuestion(airportId,grinch){
+  console.log('After Question called for airport:', airportId, 'Grinch:', grinch);
+  const flexDiv = document.querySelector('.flex');
+  while (flexDiv.firstChild) flexDiv.removeChild(flexDiv.firstChild);
+
+  const nextButton = createElement('button', {
       type: 'button',
       class: 'next',
       }, {
@@ -527,18 +594,22 @@ export async function afterQuestion(airportId){
       cursor: 'pointer',
     });
     nextButton.innerText = 'Next'
-    const flexDiv = document.querySelector('.flex')
     flexDiv.appendChild(nextButton);
-    const next = document.querySelector('.next')
-    nextButton.addEventListener('click',async function(evt) {
-      nextButton.remove()
-      const characterAndQuizBox = document.querySelector('.snowman_and_quiz_box')
-      characterAndQuizBox.remove()
-      changeAirportIconToElfIcon(airportId)
-    });
+
+    nextButton.addEventListener('click', async () => {
+    nextButton.remove();
+    const characterAndQuizBox = document.querySelector('.character_and_quiz_box');
+    if (characterAndQuizBox) characterAndQuizBox.remove();
+
+    changeAirportIconToElfIcon(airportId);
+    if (grinch === 1) {
+      console.log('Displaying Grinch question');
+      await appearGrinchQuestion();
+    }
+  });
 }
 
-export async function appearGreeting(airportId, questionId){
+export async function appearGreeting(airportId, questionId, grinch){
   const airportData = await getAirportData(airportId)
   const greeting = airportData.greeting
   const airport_name = airportData.airport_name
@@ -566,40 +637,180 @@ export async function appearGreeting(airportId, questionId){
     nextButton.addEventListener('click',async function(evt) {
       greetingField.innerText = ''
       nextButton.remove()
-      appearQuestion(airportId, questionId);
+      appearQuestion(airportId, questionId,grinch);
     });
 }
 
+export async function appearGrinchQuestion() {
+  try {
+    const questions = await fetchQuestionsByGroup('GR');
+    if (!questions || questions.length === 0) throw new Error('No Grinch questions found');
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    const questionId = randomQuestion.question_id;
+    console.log('Grinch question selected:', randomQuestion);
+
+    const questionData = await getQuestion(questionId);
+    const { question_content, right_answer, win_message, lose_message, letter_change } = questionData;
+
+    displayCharacterAndQuizBox('grinch', 'img/grinch1.png', 'GRINCH:');
+    const questionField = document.querySelector('.quiz_paragraph');
+    questionField.innerHTML = "Hahaha, Grinch is here. I have a challenge for you, little elf."
+    questionField.innerHTML = question_content;
+
+    const flexDiv = document.querySelector('.flex');
+    const textInput = createElement('input', {
+        type: 'text',
+        class: 'query',
+        placeholder: 'Type your answer here',
+    }, {
+        flex: '1',
+        border: '1px solid #D1D5DB',
+        padding: '0.5rem',
+        borderRadius: '0.5rem',
+        marginRight: '1rem',
+        fontSize: '2rem',
+    });
+    flexDiv.appendChild(textInput);
+    const submitButton = createElement('button', {
+        type: 'button',
+        class: 'submit',
+    }, {
+        backgroundColor: '#3B82F6',
+        color: 'white',
+        fontWeight: '700',
+        fontSize: '1.5rem',
+        padding: '0.5rem 1rem',
+        borderRadius: '0.25rem',
+        transition: 'background-color 0.2s ease',
+        cursor: 'pointer',
+    });
+    submitButton.innerText = 'Submit';
+    flexDiv.appendChild(submitButton);
+
+    submitButton.addEventListener('click', async function handleSubmit() {
+      const answer = textInput.value.trim().toLowerCase();
+      let isCorrect;
+      if (answer === right_answer || right_answer == null) {
+        isCorrect = true;
+      } else {
+        isCorrect = false;
+      }
+
+      const playerId = await getPlayerId('player_id');
+      const letter_count_data = await getLetterCount(playerId);
+      let letter_count = letter_count_data.letter_count;
+
+      if (isCorrect) {
+        letter_count += letter_change;
+        questionField.innerHTML = win_message + ' You got ' + letter_change +
+            ' more letters.';
+      } else {
+        letter_count -= letter_change;
+        questionField.innerHTML = lose_message + ' You lost ' + letter_change +
+            ' letters.';
+      }
+
+      updateLetterCount(playerId, letter_count);
+      const letterParagraph = document.getElementById('letter');
+      letterParagraph.innerText = letter_count;
+
+      textInput.remove();
+      submitButton.remove();
+
+      const nextButton = createElement('button', {
+        type: 'button',
+        class: 'next',
+      }, {
+        backgroundColor: '#3B82F6',
+        color: 'white',
+        fontWeight: '700',
+        fontSize: '1.5rem',
+        padding: '0.5rem 1rem',
+        borderRadius: '0.25rem',
+        transition: 'background-color 0.2s ease',
+        cursor: 'pointer',
+      });
+      nextButton.innerText = 'Next'
+      const flexDiv = document.querySelector('.flex')
+      flexDiv.appendChild(nextButton);
+      const next = document.querySelector('.next')
+      nextButton.addEventListener('click', async function(evt) {
+        nextButton.remove()
+        const characterAndQuizBox = document.querySelector(
+            '.character_and_quiz_box')
+        characterAndQuizBox.remove()
+      });
+    })
+  } catch (error) {
+    console.error('Error in appearGrinchQuestion:', error);
+    document.querySelector('.quiz_paragraph').innerHTML = 'Unable to load Grinch question.';
+  }
+}
+
 export async function airportClick(){
-    const div = event.currentTarget; // Get the div that was clicked
+    const div = event.currentTarget;
     console.log("Airport clicked:", div.id);
     const airportId = div.id;
     updateAirportDone(airportId)
     getAirportData(airportId).then(async (airportData) => {
       const countryGroup = airportData.country_group;
+      const grinch = airportData.grinch;
       const questions = await fetchQuestionsByGroup(countryGroup);
       const randomQuestion = questions[Math.floor(
           Math.random() * questions.length)];
       const questionId = randomQuestion.question_id;
-
       displayCharacterAndQuizBox('snowman', 'img/snowman.png', 'SNOWMAN:');
-      await appearGreeting(airportId, questionId);
+      await appearGreeting(airportId, questionId, grinch);
     });
 }
 
-export function changeAirportIconToElfIcon(airportId){
+export function changeAirportIconToElfIcon(airportId) {
   const airportDiv = document.getElementById(airportId);
   const airportIcon = airportDiv.querySelector('.airport-icon');
   const airportToolTip = airportDiv.querySelector('.tooltip');
   airportIcon.src = "img/elficon.png"
-  airportIcon.alt= "elf was here"
+  airportIcon.alt = "elf was here"
   airportToolTip.innerHTML += '<br>You were here already!'
   airportDiv.removeEventListener('click', airportClick);
-  airportIcon.addEventListener('click', function(evt){
+  airportIcon.addEventListener('click', function(evt) {
     evt.stopPropagation()
   })
+};
+
+export async function getCupidProtected(){
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/get_cupid_protect`)
+    const responseJson = await response.json()
+    return responseJson
+  }
+  catch(error){
+    console.log(error.message)
+  }
 }
 
+export async function updateCupidProtected(){
+  try {
+      const response = await fetch('http://127.0.0.1:5000/update_cupid_protect', {
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+            console.log("Airport successfully reset!");
+        } else {
+            console.error("Failed to reset airport:", result.error || "Unknown error");
+        }
+    } catch (error) {
+        console.error("Error resetting airport:", error.message);
+    }
+}
 
 

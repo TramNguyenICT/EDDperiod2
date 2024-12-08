@@ -7,6 +7,7 @@ import {
   getAirportData,
   airportClick,
   updateAirportDone,
+  updateLetterCount, getLetterCount, getPlayerId
 } from '../utils.js';
 
 
@@ -17,12 +18,25 @@ initializeGame();
 let questionDone = 0
 resetAirport()
 let letterCount = 100
-//set is_finished of Helsinki to 1
-updateAirportDone(1001)
+async function updateData() {
+  try {
+    const playerId = await getPlayerId();
+    console.log("Player ID:", playerId);
+
+    await updateLetterCount(playerId, letterCount);
+    const letterCountData = await getLetterCount(playerId);
+    console.log("Letter count data:", letterCountData);
+
+    updateAirportDone(1001);
+
+  } catch (error) {
+    console.log("Error:", error);
+  }
+}
+
+updateData();
 
 //while (questionDone <7){
-
-
 document.addEventListener("DOMContentLoaded", function() {
   const airportDivs = document.querySelectorAll(".airport");
   console.log(airportDivs)
@@ -31,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
       airportClick()
       questionDone++;
       if (questionDone >= 7) {
-        window.location.href = "../Lost map page/Lost-map-page.html";
+        window.location.href = "../lostMapMesssagePage/lost-map-message1.html";
       }
     });
   });

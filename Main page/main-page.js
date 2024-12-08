@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function() {
         { name: "Kuusamo Airport", src: "Main page pics/Finland/finland8.png", top: "20.31%", left: "80.15%", id: "1007" },
         { name: "Kittilä Airport", src: "Main page pics/Finland/finland9.png", top: "19.10%", left: "73.75%", id: "1005" },
         { name: "Ivalo Airport", src: "Main page pics/Finland/finland10.png", top: "7.81%", left: "78.40%", id: "1002" },
-        { name: "Rovaniemi", src: "Main page pics/Finland/finland11.png", top: "28.79%", left: "76.14%", id: "1040" },
         { name: "Copenhagen Airport", src: "Main page pics/Denmark/denmark1.png", top: "93.13%", left: "46.00%", id: "1037" },
         { name: "Vojens Airport", src: "Main page pics/Denmark/denmark2.png", top: "92.08%", left: "40.05%", id: "1010" },
         { name: "Karup Airport", src: "Main page pics/Denmark/denmark3.png", top: "85.50%", left: "40.03%", id: "1038" }
