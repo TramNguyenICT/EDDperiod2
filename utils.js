@@ -399,7 +399,7 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
     padding: '2rem',
     borderRadius: '0.5rem',
     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-    backdropFilter: 'blur(10px)',
+    backdropFilter: 'blur(20px)',
     marginLeft: '19.7%',
     zIndex: '1',
     display: 'flex',
@@ -419,11 +419,12 @@ export function displayCharacterAndQuizBox(characterName, imgSrc, headingText) {
   const quizParagraph = createElement('p', {
     class: 'quiz_paragraph'
   },{
-    color: '#1F2937',
+    color: '#f4e8de',
     fontSize: '2.5rem',
     fontWeight: '600',
     marginBottom: '2rem',
     textAlign: 'center',
+    textShadow: '1px 1px 3px rgba(0, 0, 0, 0.9)',
   });
   quizDivision.appendChild(quizParagraph);
 

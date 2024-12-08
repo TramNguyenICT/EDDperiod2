@@ -7,8 +7,35 @@ import {
 } from '../utils.js';
 import {getPlayerId} from '../utils.js';
 
+import SoundManager from '../sound-manager.js';
+
 let questionDone = 0
 document.addEventListener("DOMContentLoaded", function() {
+
+  const lostPageMusicSource = '../audio/lost-map-audio.mp3';
+
+    if (sessionStorage.getItem('backgroundMusicPlaying') === 'true') {
+        SoundManager.playBackgroundMusic(lostPageMusicSource);
+    }
+
+    const musicButton = document.querySelector('#music-button');
+    const speakerIcon = document.querySelector('#speaker-icon');
+
+    musicButton.addEventListener('click', () => {
+        SoundManager.turnOnOffBackgroundMusic(lostPageMusicSource);
+
+        if (SoundManager.backgroundMusic.paused) {
+            speakerIcon.src = '../img/music-button-off.png';
+            sessionStorage.setItem('backgroundMusicPlaying', 'false');
+        } else {
+            speakerIcon.src = '../img/music-button-on.png';
+            sessionStorage.setItem('backgroundMusicPlaying', 'true');
+        }
+    });
+
+  window.addEventListener('beforeunload', () => {
+    SoundManager.saveMusicCurrentTime();
+  })
   const buttonDivs = document.querySelectorAll(".button");
   console.log(buttonDivs)
   buttonDivs.forEach((div) => {
