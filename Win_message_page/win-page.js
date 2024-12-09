@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   function goToStartPage(){
+
     window.location.href = "../ranking-page/ranking.html";
+
   }
 });
