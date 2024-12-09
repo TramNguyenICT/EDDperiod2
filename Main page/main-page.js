@@ -1,5 +1,7 @@
+import SoundManager from '../sound-manager.js';
+
 document.addEventListener("DOMContentLoaded", function() {
-    // Data for each airport
+
     const airports = [
         { name: "Keflavík International Airport", src: "Main page pics/Iceland/iceland1.png", top: "15.62%", left: "26.77%", id: "1024" },
         { name: "Vestmannaeyjar Airport", src: "Main page pics/Iceland/iceland2.png", top: "12.47%", left: "31.69%", id: "1035" },
@@ -41,37 +43,61 @@ document.addEventListener("DOMContentLoaded", function() {
         { name: "Karup Airport", src: "Main page pics/Denmark/denmark3.png", top: "85.50%", left: "40.03%", id: "1037" }
     ];
 
-    // Container for the airport icons
-    const container = document.getElementById("airport-container");
 
-    // Loop through each airport and create HTML elements
+    const container = document.getElementById("airport-container");
+    if (container) {
+        console.log("Airport container found!");
+    } else {
+        console.error("Airport container not found!");
+    }
+
     airports.forEach(airport => {
-        // div each airport
+
         const airportDiv = document.createElement("div");
         airportDiv.classList.add("airport");
         airportDiv.id = airport.id; // Tram add
 
-        // img element for the airport icon
+
         const airportImg = document.createElement("img");
         airportImg.src = airport.src;
         airportImg.alt = airport.name;
         airportImg.classList.add("airport-icon");
 
-        // top and left positioning
+
         airportDiv.style.top = airport.top;
         airportDiv.style.left = airport.left;
 
-        // Create a tooltip element for the name
+
         const tooltip = document.createElement("div");
         tooltip.classList.add("tooltip");
         tooltip.textContent = airport.name;
 
-        // Append the airport icon to the div
+
         airportDiv.appendChild(airportImg);
         airportDiv.appendChild(tooltip);
 
-        // Append the airport div to the container
         container.appendChild(airportDiv);
+    });
+
+    const mainPageMusicSource = '../audio/main-page-audio.mp3';
+
+    if (sessionStorage.getItem('backgroundMusicPlaying') === 'true') {
+        SoundManager.playBackgroundMusic(mainPageMusicSource);
+    }
+
+    const musicButton = document.querySelector('#music-button');
+    const speakerIcon = document.querySelector('#speaker-icon');
+
+    musicButton.addEventListener('click', () => {
+        SoundManager.turnOnOffBackgroundMusic(mainPageMusicSource);
+
+        if (SoundManager.backgroundMusic.paused) {
+            speakerIcon.src = '../img/music-button-off.png';
+            sessionStorage.setItem('backgroundMusicPlaying', 'false');
+        } else {
+            speakerIcon.src = '../img/music-button-on.png';
+            sessionStorage.setItem('backgroundMusicPlaying', 'true');
+        }
     });
 });
 

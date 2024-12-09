@@ -21,6 +21,7 @@ body {
     object-fit: contain;
     z-index: -1;
 }
+
 .airport {
     position: absolute;
     cursor: pointer;
@@ -88,28 +89,49 @@ body {
 }
 
 #letter-box {
-  position: absolute;
-  border: 4px solid #327832;
-  border-radius: 40px;
-  padding: 0.5rem;
-  color: black;
-  background: url(img/btbg.png);
-  text-shadow: #FC0 1px 0 10px;
-  font-family: Arial, sans-serif;
-  font-size: 25px;
-  text-align: center;
-  z-index: 2;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    position: absolute;
+    padding: 0.5rem;
+    border-radius: 40px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    color: black;
+    background-color: #fffabb;
+    text-shadow: #FC0 1px 0 10px;
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    text-align: center;
+    z-index: 2;
+    font-weight: bold;
+    display: flex;
+
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #icon {
-  width: 30px;
-  height: 30px;
+    width: 4rem;
+    height: auto;
 }
 
 #letter {
-  margin: 0;
+    margin: 0;
+}
+
+#music-button {
+    position: fixed;
+    top: 17%;
+    left: 4%;
+    width: 5rem;
+    height: auto;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 50%
+}
+
+#music-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
