@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,9 @@
 <div>
     <img src="ranking-img/ranking-bg.png" alt="Background Image" class="bg">
 </div>
+<div class="button-container" onclick="goToStartPage()">
+            <img src="ranking-img/exit.png" alt="Exit" class="exit">
+        </div>
     <div class="container">
         <h1>TOP 10 PLAYERS</h1>
         <table class="ranking-table">
@@ -26,6 +30,11 @@
             </tbody>
         </table>
     </div>
+<script src="ranking.js">
+    function goToStartPage() {
+        window.location.href = "../Start page/start-page.html";
+    }
+</script>
 
 </body>
 </html>

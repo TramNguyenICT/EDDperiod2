@@ -153,6 +153,25 @@ def update_airport():
         app.logger.error(f"Error updating airport: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+@app.route('/update_question_done',methods=['POST'])
+def update_question_done():
+    try:
+        data = request.json
+        app.logger.debug(f"Received data: {data}")
+        question_id = data['question_id']
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql_update_question = f"UPDATE question_bank SET done = 1 WHERE question_id = %s"
+        cursor.execute(sql_update_question, (question_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        app.logger.error(f"Error updating question done: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
 @app.route('/update_airport_done',methods=['POST'])
 def update_airport_done():
     try:
@@ -505,8 +524,37 @@ def reset_cupid_protect():
     cursor.execute(sql_reset_cupid)
     connection.commit()
 
+def reset_question_py():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    sql_reset_question = "UPDATE question_bank SET done = 0"
+    cursor.execute(sql_reset_question)
+    connection.commit()
+
+@app.route('/get_top_players', methods=['GET'])
+def get_top_players():
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        sql_ranking = f" SELECT player_name, letter_count FROM player ORDER BY letter_count DESC LIMIT 10" #WHERE result = 'win'
+        cursor.execute(sql_ranking)
+        top_players = cursor.fetchall()
+        top_players_list = [
+            {"player_name": row[0], "letter_count": row[1]} for row in top_players
+        ]
+        cursor.close()
+        connection.close()
+        return jsonify({"top_players": top_players_list})
+
+    except Exception as e:
+        app.logger.error(f"Error getting top players: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
 if __name__ == '__main__':
     reset_cupid_protect()
     reset_airport_py()
     initialize_grinch_challenges()
+    reset_question_py()
     app.run(use_reloader=True, host='127.0.0.1',port=5000)

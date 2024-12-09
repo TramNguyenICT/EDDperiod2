@@ -1,3 +1,4 @@
+
  @font-face {
       font-family: GeistMono;
       src: url(GeistMono-VariableFont_wght.ttf) format("truetype");
@@ -12,6 +13,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 .bg{
     position: fixed;
@@ -76,3 +78,26 @@ h1 {
 .ranking-table td {
     color: #555;
 }
+.button-container{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    background-color: transparent;
+    opacity: 0.8;
+}
+.exit {
+    width: 10vh;
+    height: 10vh;
+    object-fit: contain;
+}
+
+.button-container:hover .exit {
+    transform: scale(1.1);
+    opacity: 1;
+
+}
+
