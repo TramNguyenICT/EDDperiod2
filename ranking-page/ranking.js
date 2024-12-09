@@ -47,3 +47,7 @@ function displayTopPlayers(players) {
 document.addEventListener('DOMContentLoaded', () => {
     getTopPlayers();
 });
+
+function goToStartPage() {
+        window.location.href = "../Start page/start-page.html";
+    }
