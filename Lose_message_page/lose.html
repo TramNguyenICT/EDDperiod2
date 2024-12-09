@@ -8,20 +8,20 @@
     <title>Elf Delivery Dash</title>
     <link rel="stylesheet" href="lose.css">
     <link rel="icon" type="image/x-icon" href="../img/letters%20image.png">
+    <script type="module" src="../sound-manager.js"></script>
+    <script type="module" src="lose-page.js"></script>
 </head>
 <body>
 <div>
-        <img src="win_img/win-bg.png" alt="background" class="background">
+    <img src="lose-img/lose-page-img.png" alt="background" class="background">
+    <button id="exit-button">
+        <img id ="x icon" src="lose-img/exit.png" alt="Exit Button">
+    </button>
 
-        <div class="button-container" onclick="goToStartPage()">
-            <img src="win_img/exit.png" alt="Exit" class="exit">
-        </div>
-    </div>
-<script >
-    function goToStartPage(){
-        window.location.href = "../Start page/start-page.html";
-    }
-</script>
+    <button id="music-button">
+      <img id="speaker-icon" src="../img/music-button-on.png" alt="Music On Off Button"/>
+    </button>
+</div>
 
 </body>
 </html>

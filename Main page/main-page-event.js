@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     div.addEventListener('click', function(evt) {
       airportClick()
       questionDone++;
-      if (questionDone >= 30) {
+      if (questionDone >= 3) {
         window.location.href = "../lostMapMesssagePage/lost-map-message1.html";
       }
     });
