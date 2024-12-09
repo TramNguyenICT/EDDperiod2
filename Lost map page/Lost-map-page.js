@@ -45,13 +45,14 @@ document.addEventListener("DOMContentLoaded", function() {
       const letter_count_data = await getLetterCount(playerId)
       console.log("letter_count_data:", letter_count_data)
       let letter_count = letter_count_data.letter_count
+      let result;
       if (letter_count >= 100){
-        let result = "win"
+        result = "win"
       }
       else{
-        let result = "lose"
+        result = "lose"
       }
-      updateFinalResult(playerId,randomIndex)
+      updateFinalResult(playerId,result)
       if (result === "win") {
         window.location.href = "../Win_message_page/win.html";
       }

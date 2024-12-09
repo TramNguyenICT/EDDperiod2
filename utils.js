@@ -618,8 +618,8 @@ export async function appearGreeting(airportId, questionId, grinch){
   const weathercontent = 'The current weather at '+ airport_name + ' is '+ weatherData.description + ' and the temperature is ' + weatherData.temperature + ' Celcius degree.'
   const flexDiv = document.querySelector('.flex')
   const greetingField = document.querySelector('.quiz_paragraph')
-  greetingField.innerText = greeting;
-  greetingField.innerText += weathercontent;
+  greetingField.innerHTML = greeting;
+  greetingField.innerHTML += weathercontent;
   const nextButton = createElement('button', {
       type: 'button',
       class: 'next',
@@ -648,6 +648,7 @@ export async function appearGrinchQuestion() {
     if (!questions || questions.length === 0) throw new Error('No Grinch questions found');
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
     const questionId = randomQuestion.question_id;
+    updateQuestionDone(questionId)
     console.log('Grinch question selected:', randomQuestion);
 
     const questionData = await getQuestion(questionId);
@@ -656,7 +657,7 @@ export async function appearGrinchQuestion() {
     displayCharacterAndQuizBox('grinch', 'img/grinch1.png', 'GRINCH:');
     const questionField = document.querySelector('.quiz_paragraph');
     questionField.innerHTML = "Hahaha, Grinch is here. I have a challenge for you, little elf."
-    questionField.innerHTML = question_content;
+    questionField.innerHTML += question_content;
 
     const flexDiv = document.querySelector('.flex');
     const textInput = createElement('input', {
@@ -760,6 +761,7 @@ export async function airportClick(){
       const randomQuestion = questions[Math.floor(
           Math.random() * questions.length)];
       const questionId = randomQuestion.question_id;
+      updateQuestionDone(questionId)
       displayCharacterAndQuizBox('snowman', 'img/snowman.png', 'SNOWMAN:');
       await appearGreeting(airportId, questionId, grinch);
     });
@@ -811,5 +813,30 @@ export async function updateCupidProtected(){
         }
     } catch (error) {
         console.error("Error resetting airport:", error.message);
+    }
+}
+
+export async function updateQuestionDone(questionId){
+  try {
+      const response = await fetch('http://127.0.0.1:5000/update_question_done', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question_id: questionId,
+        }),
+      });
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        console.log("Question", questionId,"updated to be done successfully!");
+      }
+      else{
+       console.log("Error updating question:", data.message)
+      }
+    }
+    catch(error){
+      console.log("Fetch error:", error.message)
     }
 }
