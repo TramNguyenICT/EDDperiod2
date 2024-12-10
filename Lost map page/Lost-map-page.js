@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener('beforeunload', () => {
     SoundManager.saveMusicCurrentTime();
   })
+
+
+
   const buttonDivs = document.querySelectorAll(".button");
   console.log(buttonDivs)
   buttonDivs.forEach((div) => {
