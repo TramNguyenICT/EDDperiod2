@@ -28,7 +28,7 @@ async function updateData() {
     console.log("Letter count data:", letterCountData);
 
     updateAirportDone(1001);
-
+    updateAirportDone(1039)
   } catch (error) {
     console.log("Error:", error);
   }
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     div.addEventListener('click', function(evt) {
       airportClick()
 
-      if (questionDone >= 7) {
+      if (questionDone >= 5) {
 
         window.location.href = "../lostMapMesssagePage/lost-map-message1.html";
       }

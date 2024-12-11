@@ -12,8 +12,8 @@ def get_db_connection():
         host='127.0.0.1',
         port=3306,
         database='elfdeliverydash',
-        user='dokyeom',
-        password='seventeen17',
+        user='root',
+        password='180790',
         autocommit=True,
         charset='utf8mb4',
         collation='utf8mb4_unicode_ci',
@@ -100,7 +100,6 @@ def get_player_id():
     try:
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
-
         sql_get_player_id = f"SELECT player_id FROM player ORDER BY player_id DESC LIMIT 1"
         cursor.execute(sql_get_player_id)
         result = cursor.fetchone()
@@ -111,7 +110,6 @@ def get_player_id():
             return jsonify({"player_id": player_id})
         else:
             return jsonify({"error": "Player not found"}), 404
-
     except Exception as e:
         app.logger.error(f"Error getting player ID: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -314,28 +312,20 @@ def get_letter_change_grinch():
 def get_question():
     try:
         question_id = request.args.get('question_id')
-
         if not question_id:
             return jsonify({"error": "Missing 'question_id' parameter"}), 400
-
         connection = get_db_connection()
         cursor = connection.cursor()
-
         sql = """
             SELECT question_content, right_answer, question_type, country_group,
                    letter_change, win_message, lose_message
             FROM question_bank
             WHERE question_id = %s
         """
-
         cursor.execute(sql, (question_id,))
         question_data = cursor.fetchone()
-
-        # Check if the data is found
         if not question_data:
             return jsonify({"error": "Question not found"}), 404
-
-        # Prepare the data as a JSON response
         result = {
             "question_content": question_data[0],
             "right_answer": question_data[1],
@@ -348,7 +338,6 @@ def get_question():
         cursor.close()
         connection.close()
         return jsonify(result)
-
     except Exception as e:
         app.logger.error(f"Error retrieving question: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -424,42 +413,30 @@ def update_final_result():
 @app.route('/get_weather_data', methods=['GET'])
 def get_weather_data():
     airport_id = request.args.get('airport_id')
-
     if not airport_id:
         return jsonify({"error": "Missing 'airport_id' parameter"}), 400
-
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
-
     sql237 = f"SELECT city_id FROM airport WHERE airport_id = '{airport_id}'"
     cursor.execute(sql237)
     city_id_data = cursor.fetchone()
-
     if not city_id_data:
         return jsonify({"error": "Airport not found"}), 404
-
     city_id = city_id_data['city_id']
-
     request_url = f"https://api.openweathermap.org/data/2.5/weather?id={city_id}&appid={apikey}"
-
     try:
         response = requests.get(request_url)
-
         if response.status_code == 200:
             weather_data = response.json()
-
-            # Prepare the required data
             weather_info = {
                 "description": weather_data["weather"][0]["description"],
                 "temperature": round(weather_data["main"]["temp"] - 273.15,2)
             }
             cursor.close()
             connection.close()
-
             return jsonify(weather_info)
         else:
             return jsonify({"error": "Failed to fetch weather data"}), response.status_code
-
     except requests.exceptions.RequestException as ex:
         return jsonify({"error": f"Request failed: {ex}"}), 500
 
